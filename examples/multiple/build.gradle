@@ -1,0 +1,20 @@
+
+plugins {
+	id "ee.keel.gradle.JsToolkitToolsPlugin" version "1.0.1"
+}
+
+jsToolkit {
+	node {
+		version = new URL("http://nodejs.org/dist/v12.14.1/node-v12.14.1-linux-x64.tar.gz")
+	}
+
+	pnpm {
+		version = "4.7.0"
+	}
+}
+
+subprojects {
+	jsToolkit {
+		// configure subprojects
+	}
+}

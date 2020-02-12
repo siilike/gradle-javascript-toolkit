@@ -1,0 +1,99 @@
+
+plugins {
+	id "ee.keel.gradle.JsToolkitPlugin"
+}
+
+jsToolkit {
+	babel {
+		preset "production", "ie 11, Firefox ESR"
+		preset "modern", "last 1 chrome version, last 1 firefox version"
+		preset "ssr", "node 12"
+	}
+
+	distributions {
+		libraries {
+			library = true
+
+			copyLibrary("libs") { Directory a ->
+				from {
+					fileTree(a) {
+						include "client/**"
+						include ".version"
+					}.files
+				}
+			}
+
+			repo {
+				name = "example-static-libs"
+				path = "/data1/apps/example/static/l${librariesVersion.get()}/"
+			}
+		}
+
+		example {
+			dependsOn "libraries"
+
+			copyModule("example") { Directory a ->
+				from {
+					fileTree(a) {
+						include "client/**"
+						include "css/**"
+						include ".version"
+						include ".version-*"
+					}.files
+				}
+			}
+
+			repo {
+				name = "example-static"
+				path = "/data1/apps/example/static/v${version.get()}/"
+			}
+		}
+	}
+
+	outputs {
+		client {
+			preset "production", "modern"
+		}
+		server {
+			preset "ssr"
+			minify = false
+		}
+	}
+
+	libraries {
+		libs {
+		}
+	}
+
+	modules {
+		example {
+			include "**/**"
+			exclude "**/**"
+			library "libs"
+
+			css "20-test.css", "test.css"
+		}
+	}
+
+	runtimes {
+		example {
+			module "example"
+			template = file("templates/example.tpl")
+			templateVar "test", 5
+			indexFileName = "index.php"
+
+			distribution {
+				repo {
+					path = "/data1/apps/example/runtime/"
+				}
+			}
+		}
+	}
+
+	sentry {
+		token = "XXX"
+		url = "https://sentry.XXX/"
+		organization = "main"
+		projectName = "example"
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"name": "example",
+	"version": "1.0.0",
+	"main": "js2/index.js",
+	"devDependencies":
+	{
+		"d3": "latest",
+		"@sentry/browser": "latest",
+		"@sentry/integrations": "latest"
+	},
+	"dependencies":
+	{
+		"accounting": "latest",
+		"bluebird": "latest",
+		"luxon": "latest",
+		"messageformat": "latest",
+		"react": "latest",
+		"react-dom": "latest"
+	}
+}

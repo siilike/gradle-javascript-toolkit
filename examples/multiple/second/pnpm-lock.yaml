@@ -1,0 +1,430 @@
+dependencies:
+  accounting: 0.4.1
+  bluebird: 3.7.2
+  luxon: 1.22.0
+  messageformat: 2.3.0
+  react: 16.12.0
+  react-dom: 16.12.0_react@16.12.0
+devDependencies:
+  '@sentry/browser': 5.12.1
+  '@sentry/integrations': 5.12.0
+  d3: 5.15.0
+lockfileVersion: 5.1
+packages:
+  /@sentry/browser/5.12.1:
+    dependencies:
+      '@sentry/core': 5.12.0
+      '@sentry/types': 5.12.0
+      '@sentry/utils': 5.12.0
+      tslib: 1.10.0
+    dev: true
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-Zl7VdppUxctyaoqMSEhnDJp2rrupx8n8N2n3PSooH74yhB2Z91nt84mouczprBsw3JU1iggGyUw9seRFzDI1hw==
+  /@sentry/core/5.12.0:
+    dependencies:
+      '@sentry/hub': 5.12.0
+      '@sentry/minimal': 5.12.0
+      '@sentry/types': 5.12.0
+      '@sentry/utils': 5.12.0
+      tslib: 1.10.0
+    dev: true
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-wY4rsoX71QsGpcs9tF+OxKgDPKzIFMRvFiSRcJoPMfhFsTilQ/CBMn/c3bDtWQd9Bnr/ReQIL6NbnIjUsPHA4Q==
+  /@sentry/hub/5.12.0:
+    dependencies:
+      '@sentry/types': 5.12.0
+      '@sentry/utils': 5.12.0
+      tslib: 1.10.0
+    dev: true
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-3k7yE8BEVJsKx8mR4LcI4IN0O8pngmq44OcJ/fRUUBAPqsT38jsJdP2CaWhdlM1jiNUzUDB1ktBv6/lY+VgcoQ==
+  /@sentry/integrations/5.12.0:
+    dependencies:
+      '@sentry/types': 5.12.0
+      '@sentry/utils': 5.12.0
+      tslib: 1.10.0
+    dev: true
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-4G/TvCEP9M6xgY61r46UE4ruSgF42rZnvO0ZfIBI/240DNYMTpHLvjU3Xvrv3wDl3emCvy4QgAIceI/zj8nPjw==
+  /@sentry/minimal/5.12.0:
+    dependencies:
+      '@sentry/hub': 5.12.0
+      '@sentry/types': 5.12.0
+      tslib: 1.10.0
+    dev: true
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-fk73meyz4k4jCg9yzbma+WkggsfEIQWI2e2TWfYsRGcrV3RnlSrXyM4D91/A8Bjx10SNezHPUFHjasjlHXOkyA==
+  /@sentry/types/5.12.0:
+    dev: true
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-aZbBouBLrKB8wXlztriIagZNmsB+wegk1Jkl6eprqRW/w24Sl/47tiwH8c5S4jYTxdAiJk+SAR10AAuYmIN3zg==
+  /@sentry/utils/5.12.0:
+    dependencies:
+      '@sentry/types': 5.12.0
+      tslib: 1.10.0
+    dev: true
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-fYUadGLbfTCbs4OG5hKCOtv2jrNE4/8LHNABy9DwNJ/t5DVtGqWAZBnxsC+FG6a3nVqCpxjFI9AHlYsJ2wsf7Q==
+  /accounting/0.4.1:
+    dev: false
+    resolution:
+      integrity: sha1-h91BA+/39EYPHhhvXGd+1s9WaIM=
+  /bluebird/3.7.2:
+    dev: false
+    resolution:
+      integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
+  /commander/2.20.3:
+    dev: true
+    resolution:
+      integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
+  /d3-array/1.2.4:
+    dev: true
+    resolution:
+      integrity: sha512-KHW6M86R+FUPYGb3R5XiYjXPq7VzwxZ22buHhAEVG5ztoEcZZMLov530mmccaqA1GghZArjQV46fuc8kUqhhHw==
+  /d3-axis/1.0.12:
+    dev: true
+    resolution:
+      integrity: sha512-ejINPfPSNdGFKEOAtnBtdkpr24c4d4jsei6Lg98mxf424ivoDP2956/5HDpIAtmHo85lqT4pruy+zEgvRUBqaQ==
+  /d3-brush/1.1.5:
+    dependencies:
+      d3-dispatch: 1.0.6
+      d3-drag: 1.2.5
+      d3-interpolate: 1.4.0
+      d3-selection: 1.4.1
+      d3-transition: 1.3.2
+    dev: true
+    resolution:
+      integrity: sha512-rEaJ5gHlgLxXugWjIkolTA0OyMvw8UWU1imYXy1v642XyyswmI1ybKOv05Ft+ewq+TFmdliD3VuK0pRp1VT/5A==
+  /d3-chord/1.0.6:
+    dependencies:
+      d3-array: 1.2.4
+      d3-path: 1.0.9
+    dev: true
+    resolution:
+      integrity: sha512-JXA2Dro1Fxw9rJe33Uv+Ckr5IrAa74TlfDEhE/jfLOaXegMQFQTAgAw9WnZL8+HxVBRXaRGCkrNU7pJeylRIuA==
+  /d3-collection/1.0.7:
+    dev: true
+    resolution:
+      integrity: sha512-ii0/r5f4sjKNTfh84Di+DpztYwqKhEyUlKoPrzUFfeSkWxjW49xU2QzO9qrPrNkpdI0XJkfzvmTu8V2Zylln6A==
+  /d3-color/1.4.0:
+    dev: true
+    resolution:
+      integrity: sha512-TzNPeJy2+iEepfiL92LAAB7fvnp/dV2YwANPVHdDWmYMm23qIJBYww3qT8I8C1wXrmrg4UWs7BKc2tKIgyjzHg==
+  /d3-contour/1.3.2:
+    dependencies:
+      d3-array: 1.2.4
+    dev: true
+    resolution:
+      integrity: sha512-hoPp4K/rJCu0ladiH6zmJUEz6+u3lgR+GSm/QdM2BBvDraU39Vr7YdDCicJcxP1z8i9B/2dJLgDC1NcvlF8WCg==
+  /d3-dispatch/1.0.6:
+    dev: true
+    resolution:
+      integrity: sha512-fVjoElzjhCEy+Hbn8KygnmMS7Or0a9sI2UzGwoB7cCtvI1XpVN9GpoYlnb3xt2YV66oXYb1fLJ8GMvP4hdU1RA==
+  /d3-drag/1.2.5:
+    dependencies:
+      d3-dispatch: 1.0.6
+      d3-selection: 1.4.1
+    dev: true
+    resolution:
+      integrity: sha512-rD1ohlkKQwMZYkQlYVCrSFxsWPzI97+W+PaEIBNTMxRuxz9RF0Hi5nJWHGVJ3Om9d2fRTe1yOBINJyy/ahV95w==
+  /d3-dsv/1.2.0:
+    dependencies:
+      commander: 2.20.3
+      iconv-lite: 0.4.24
+      rw: 1.3.3
+    dev: true
+    hasBin: true
+    resolution:
+      integrity: sha512-9yVlqvZcSOMhCYzniHE7EVUws7Fa1zgw+/EAV2BxJoG3ME19V6BQFBwI855XQDsxyOuG7NibqRMTtiF/Qup46g==
+  /d3-ease/1.0.6:
+    dev: true
+    resolution:
+      integrity: sha512-SZ/lVU7LRXafqp7XtIcBdxnWl8yyLpgOmzAk0mWBI9gXNzLDx5ybZgnRbH9dN/yY5tzVBqCQ9avltSnqVwessQ==
+  /d3-fetch/1.1.2:
+    dependencies:
+      d3-dsv: 1.2.0
+    dev: true
+    resolution:
+      integrity: sha512-S2loaQCV/ZeyTyIF2oP8D1K9Z4QizUzW7cWeAOAS4U88qOt3Ucf6GsmgthuYSdyB2HyEm4CeGvkQxWsmInsIVA==
+  /d3-force/1.2.1:
+    dependencies:
+      d3-collection: 1.0.7
+      d3-dispatch: 1.0.6
+      d3-quadtree: 1.0.7
+      d3-timer: 1.0.10
+    dev: true
+    resolution:
+      integrity: sha512-HHvehyaiUlVo5CxBJ0yF/xny4xoaxFxDnBXNvNcfW9adORGZfyNF1dj6DGLKyk4Yh3brP/1h3rnDzdIAwL08zg==
+  /d3-format/1.4.3:
+    dev: true
+    resolution:
+      integrity: sha512-mm/nE2Y9HgGyjP+rKIekeITVgBtX97o1nrvHCWX8F/yBYyevUTvu9vb5pUnKwrcSw7o7GuwMOWjS9gFDs4O+uQ==
+  /d3-geo/1.11.9:
+    dependencies:
+      d3-array: 1.2.4
+    dev: true
+    resolution:
+      integrity: sha512-9edcH6J3s/Aa3KJITWqFJbyB/8q3mMlA9Fi7z6yy+FAYMnRaxmC7jBhUnsINxVWD14GmqX3DK8uk7nV6/Ekt4A==
+  /d3-hierarchy/1.1.9:
+    dev: true
+    resolution:
+      integrity: sha512-j8tPxlqh1srJHAtxfvOUwKNYJkQuBFdM1+JAUfq6xqH5eAqf93L7oG1NVqDa4CpFZNvnNKtCYEUC8KY9yEn9lQ==
+  /d3-interpolate/1.4.0:
+    dependencies:
+      d3-color: 1.4.0
+    dev: true
+    resolution:
+      integrity: sha512-V9znK0zc3jOPV4VD2zZn0sDhZU3WAE2bmlxdIwwQPPzPjvyLkd8B3JUVdS1IDUFDkWZ72c9qnv1GK2ZagTZ8EA==
+  /d3-path/1.0.9:
+    dev: true
+    resolution:
+      integrity: sha512-VLaYcn81dtHVTjEHd8B+pbe9yHWpXKZUC87PzoFmsFrJqgFwDe/qxfp5MlfsfM1V5E/iVt0MmEbWQ7FVIXh/bg==
+  /d3-polygon/1.0.6:
+    dev: true
+    resolution:
+      integrity: sha512-k+RF7WvI08PC8reEoXa/w2nSg5AUMTi+peBD9cmFc+0ixHfbs4QmxxkarVal1IkVkgxVuk9JSHhJURHiyHKAuQ==
+  /d3-quadtree/1.0.7:
+    dev: true
+    resolution:
+      integrity: sha512-RKPAeXnkC59IDGD0Wu5mANy0Q2V28L+fNe65pOCXVdVuTJS3WPKaJlFHer32Rbh9gIo9qMuJXio8ra4+YmIymA==
+  /d3-random/1.1.2:
+    dev: true
+    resolution:
+      integrity: sha512-6AK5BNpIFqP+cx/sreKzNjWbwZQCSUatxq+pPRmFIQaWuoD+NrbVWw7YWpHiXpCQ/NanKdtGDuB+VQcZDaEmYQ==
+  /d3-scale-chromatic/1.5.0:
+    dependencies:
+      d3-color: 1.4.0
+      d3-interpolate: 1.4.0
+    dev: true
+    resolution:
+      integrity: sha512-ACcL46DYImpRFMBcpk9HhtIyC7bTBR4fNOPxwVSl0LfulDAwyiHyPOTqcDG1+t5d4P9W7t/2NAuWu59aKko/cg==
+  /d3-scale/2.2.2:
+    dependencies:
+      d3-array: 1.2.4
+      d3-collection: 1.0.7
+      d3-format: 1.4.3
+      d3-interpolate: 1.4.0
+      d3-time: 1.1.0
+      d3-time-format: 2.2.3
+    dev: true
+    resolution:
+      integrity: sha512-LbeEvGgIb8UMcAa0EATLNX0lelKWGYDQiPdHj+gLblGVhGLyNbaCn3EvrJf0A3Y/uOOU5aD6MTh5ZFCdEwGiCw==
+  /d3-selection/1.4.1:
+    dev: true
+    resolution:
+      integrity: sha512-BTIbRjv/m5rcVTfBs4AMBLKs4x8XaaLkwm28KWu9S2vKNqXkXt2AH2Qf0sdPZHjFxcWg/YL53zcqAz+3g4/7PA==
+  /d3-shape/1.3.7:
+    dependencies:
+      d3-path: 1.0.9
+    dev: true
+    resolution:
+      integrity: sha512-EUkvKjqPFUAZyOlhY5gzCxCeI0Aep04LwIRpsZ/mLFelJiUfnK56jo5JMDSE7yyP2kLSb6LtF+S5chMk7uqPqw==
+  /d3-time-format/2.2.3:
+    dependencies:
+      d3-time: 1.1.0
+    dev: true
+    resolution:
+      integrity: sha512-RAHNnD8+XvC4Zc4d2A56Uw0yJoM7bsvOlJR33bclxq399Rak/b9bhvu/InjxdWhPtkgU53JJcleJTGkNRnN6IA==
+  /d3-time/1.1.0:
+    dev: true
+    resolution:
+      integrity: sha512-Xh0isrZ5rPYYdqhAVk8VLnMEidhz5aP7htAADH6MfzgmmicPkTo8LhkLxci61/lCB7n7UmE3bN0leRt+qvkLxA==
+  /d3-timer/1.0.10:
+    dev: true
+    resolution:
+      integrity: sha512-B1JDm0XDaQC+uvo4DT79H0XmBskgS3l6Ve+1SBCfxgmtIb1AVrPIoqd+nPSv+loMX8szQ0sVUhGngL7D5QPiXw==
+  /d3-transition/1.3.2:
+    dependencies:
+      d3-color: 1.4.0
+      d3-dispatch: 1.0.6
+      d3-ease: 1.0.6
+      d3-interpolate: 1.4.0
+      d3-selection: 1.4.1
+      d3-timer: 1.0.10
+    dev: true
+    resolution:
+      integrity: sha512-sc0gRU4PFqZ47lPVHloMn9tlPcv8jxgOQg+0zjhfZXMQuvppjG6YuwdMBE0TuqCZjeJkLecku/l9R0JPcRhaDA==
+  /d3-voronoi/1.1.4:
+    dev: true
+    resolution:
+      integrity: sha512-dArJ32hchFsrQ8uMiTBLq256MpnZjeuBtdHpaDlYuQyjU0CVzCJl/BVW+SkszaAeH95D/8gxqAhgx0ouAWAfRg==
+  /d3-zoom/1.8.3:
+    dependencies:
+      d3-dispatch: 1.0.6
+      d3-drag: 1.2.5
+      d3-interpolate: 1.4.0
+      d3-selection: 1.4.1
+      d3-transition: 1.3.2
+    dev: true
+    resolution:
+      integrity: sha512-VoLXTK4wvy1a0JpH2Il+F2CiOhVu7VRXWF5M/LroMIh3/zBAC3WAt7QoIvPibOavVo20hN6/37vwAsdBejLyKQ==
+  /d3/5.15.0:
+    dependencies:
+      d3-array: 1.2.4
+      d3-axis: 1.0.12
+      d3-brush: 1.1.5
+      d3-chord: 1.0.6
+      d3-collection: 1.0.7
+      d3-color: 1.4.0
+      d3-contour: 1.3.2
+      d3-dispatch: 1.0.6
+      d3-drag: 1.2.5
+      d3-dsv: 1.2.0
+      d3-ease: 1.0.6
+      d3-fetch: 1.1.2
+      d3-force: 1.2.1
+      d3-format: 1.4.3
+      d3-geo: 1.11.9
+      d3-hierarchy: 1.1.9
+      d3-interpolate: 1.4.0
+      d3-path: 1.0.9
+      d3-polygon: 1.0.6
+      d3-quadtree: 1.0.7
+      d3-random: 1.1.2
+      d3-scale: 2.2.2
+      d3-scale-chromatic: 1.5.0
+      d3-selection: 1.4.1
+      d3-shape: 1.3.7
+      d3-time: 1.1.0
+      d3-time-format: 2.2.3
+      d3-timer: 1.0.10
+      d3-transition: 1.3.2
+      d3-voronoi: 1.1.4
+      d3-zoom: 1.8.3
+    dev: true
+    resolution:
+      integrity: sha512-C+E80SL2nLLtmykZ6klwYj5rPqB5nlfN5LdWEAVdWPppqTD8taoJi2PxLZjPeYT8FFRR2yucXq+kBlOnnvZeLg==
+  /iconv-lite/0.4.24:
+    dependencies:
+      safer-buffer: 2.1.2
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==
+  /js-tokens/4.0.0:
+    dev: false
+    resolution:
+      integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
+  /loose-envify/1.4.0:
+    dependencies:
+      js-tokens: 4.0.0
+    dev: false
+    hasBin: true
+    resolution:
+      integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
+  /luxon/1.22.0:
+    dev: false
+    resolution:
+      integrity: sha512-3sLvlfbFo+AxVEY3IqxymbumtnlgBwjDExxK60W3d+trrUzErNAz/PfvPT+mva+vEUrdIodeCOs7fB6zHtRSrw==
+  /make-plural/4.3.0:
+    dev: false
+    hasBin: true
+    optionalDependencies:
+      minimist: 1.2.0
+    resolution:
+      integrity: sha512-xTYd4JVHpSCW+aqDof6w/MebaMVNTVYBZhbB/vi513xXdiPT92JMVCo0Jq8W2UZnzYRFeVbQiQ+I25l13JuKvA==
+  /messageformat-formatters/2.0.1:
+    dev: false
+    resolution:
+      integrity: sha512-E/lQRXhtHwGuiQjI7qxkLp8AHbMD5r2217XNe/SREbBlSawe0lOqsFb7rflZJmlQFSULNLIqlcjjsCPlB3m3Mg==
+  /messageformat-parser/4.1.2:
+    dev: false
+    resolution:
+      integrity: sha512-7dWuifeyldz7vhEuL96Kwq1fhZXBW+TUfbnHN4UCrCxoXQTYjHnR78eI66Gk9LaLLsAvzPNVJBaa66DRfFNaiA==
+  /messageformat/2.3.0:
+    dependencies:
+      make-plural: 4.3.0
+      messageformat-formatters: 2.0.1
+      messageformat-parser: 4.1.2
+    dev: false
+    resolution:
+      integrity: sha512-uTzvsv0lTeQxYI2y1NPa1lItL5VRI8Gb93Y2K2ue5gBPyrbJxfDi/EYWxh2PKv5yO42AJeeqblS9MJSh/IEk4w==
+  /minimist/1.2.0:
+    dev: false
+    optional: true
+    resolution:
+      integrity: sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ=
+  /object-assign/4.1.1:
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
+  /prop-types/15.7.2:
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      react-is: 16.12.0
+    dev: false
+    resolution:
+      integrity: sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
+  /react-dom/16.12.0_react@16.12.0:
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      prop-types: 15.7.2
+      react: 16.12.0
+      scheduler: 0.18.0
+    dev: false
+    peerDependencies:
+      react: ^16.0.0
+    resolution:
+      integrity: sha512-LMxFfAGrcS3kETtQaCkTKjMiifahaMySFDn71fZUNpPHZQEzmk/GiAeIT8JSOrHB23fnuCOMruL2a8NYlw+8Gw==
+  /react-is/16.12.0:
+    dev: false
+    resolution:
+      integrity: sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
+  /react/16.12.0:
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      prop-types: 15.7.2
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-fglqy3k5E+81pA8s+7K0/T3DBCF0ZDOher1elBFzF7O6arXJgzyu/FW+COxFvAWXJoJN9KIZbT2LXlukwphYTA==
+  /rw/1.3.3:
+    dev: true
+    resolution:
+      integrity: sha1-P4Yt+pGrdmsUiF700BEkv9oHT7Q=
+  /safer-buffer/2.1.2:
+    dev: true
+    resolution:
+      integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
+  /scheduler/0.18.0:
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+    dev: false
+    resolution:
+      integrity: sha512-agTSHR1Nbfi6ulI0kYNK0203joW2Y5W4po4l+v03tOoiJKpTBbxpNhWDvqc/4IcOw+KLmSiQLTasZ4cab2/UWQ==
+  /tslib/1.10.0:
+    dev: true
+    resolution:
+      integrity: sha512-qOebF53frne81cf0S9B41ByenJ3/IuH8yJKngAX35CmiZySA0khhkovshKK+jGCaMnVomla7gVlIcc3EvKPbTQ==
+specifiers:
+  '@sentry/browser': latest
+  '@sentry/integrations': latest
+  accounting: latest
+  bluebird: latest
+  d3: latest
+  luxon: latest
+  messageformat: latest
+  react: latest
+  react-dom: latest

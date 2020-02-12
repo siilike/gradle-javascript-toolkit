@@ -1,0 +1,68 @@
+
+plugins {
+	id 'java-gradle-plugin'
+	id 'com.gradle.plugin-publish' version '0.10.1'
+	id 'groovy'
+	id 'eclipse'
+}
+
+description = 'Gradle JavaScript Toolkit'
+group = 'ee.keel.gradle'
+version = '1.0.2'
+
+sourceCompatibility = 1.8
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	jcenter()
+
+	maven {
+		url "https://plugins.gradle.org/m2/"
+	}
+}
+
+dependencies {
+	implementation "com.netflix.nebula:gradle-ospackage-plugin:8.1.0"
+	implementation "org.zeromq:jeromq:0.5.1"
+}
+
+gradlePlugin {
+	plugins {
+		jsToolkitBase {
+			id = 'ee.keel.gradle.JsToolkitBasePlugin'
+			implementationClass = 'ee.keel.gradle.BasePlugin'
+		}
+		jsToolkitTools {
+			id = 'ee.keel.gradle.JsToolkitToolsPlugin'
+			implementationClass = 'ee.keel.gradle.ToolsPlugin'
+		}
+		jsToolkit {
+			id = 'ee.keel.gradle.JsToolkitPlugin'
+			implementationClass = 'ee.keel.gradle.JavascriptPlugin'
+		}
+	}
+}
+
+pluginBundle {
+	website = 'https://github.com/siilike/gradle-javascript-toolkit/'
+	vcsUrl = 'https://github.com/siilike/gradle-javascript-toolkit/'
+	description = 'Seamless JavaScript development with Gradle'
+	tags = [ 'javascript', 'node', 'nodejs', 'webpack', 'postcss' ]
+
+	plugins {
+		jsToolkitBase {
+			displayName = 'JavaScript Toolkit base plugin'
+		}
+		jsToolkitTools {
+			displayName = 'JavaScript Toolkit tools plugin'
+		}
+		jsToolkit {
+			displayName = 'JavaScript Toolkit plugin'
+		}
+	}
+}
+
+sourceSets.main.java.srcDirs = []
+sourceSets.main.groovy.srcDirs += ["src"]
+sourceSets.main.resources.srcDirs += ["resources"]

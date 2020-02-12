@@ -1,0 +1,7 @@
+
+buildCache {
+	local {
+		directory = new File(rootDir, '.cache')
+		removeUnusedEntriesAfterDays = 7
+	}
+}
