@@ -19,6 +19,12 @@ There are three plugins:
 
 The main outputs are modules and libraries. Note that modules are not subprojects -- you should use actual Gradle subprojects, because they can be built in parallel. Subprojects use their parents' build tools by default.
 
+## Dependencies
+
+  * Gradle that is supported by the gradle-ospackage-plugin, tested with Gradle 6
+  * wget and tar for downloading and unpacking node and pnpm
+  * sh for uploading assets to Sentry
+
 ## Configuration
 
 Default configuration files for JavaScript tools:
