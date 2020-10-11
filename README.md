@@ -43,9 +43,9 @@ jsToolkit {
 
 Default configuration files for JavaScript tools:
 
-  * Babel: `resources/babel/config.js`
-  * PostCSS: `resources/postcss/config.js`
-  * WebPack: `resources/webpack/base.js` (general), `resources/webpack/base.config.js` (app), `resources/webpack/base.config.libs.js` (libraries)
+  * Babel: [`resources/babel/config.js`](resources/babel/config.js)
+  * PostCSS: [`resources/postcss/config.js`](resources/postcss/config.js)
+  * WebPack: [`resources/webpack/base.js`](resources/webpack/base.js) (general), [`resources/webpack/base.config.js`](resources/webpack/base.config.js) (app), [`resources/webpack/base.config.libs.js`](resources/webpack/base.config.libs.js) (libraries)
 
 You are free to extend or override those, but the configuration needs to be compatible with the plugin.
 
@@ -83,7 +83,7 @@ The environment-dependent variants are mainly to ease working with git submodule
 
 # DSL
 
-See `src/ee/keel/gradle/dsl/` for all possible options.
+See [`src/ee/keel/gradle/dsl/`](src/ee/keel/gradle/dsl/) for all possible options.
 
 ## Node and pnpm versions
 
@@ -104,7 +104,7 @@ packages {
 }
 ```
 
-See defaults in `src/ee/keel/gradle/dsl/JsToolkitExtension.groovy`.
+See defaults in [`src/ee/keel/gradle/dsl/JsToolkitExtension.groovy`](src/ee/keel/gradle/dsl/JsToolkitExtension.groovy).
 
 After a successful build you should copy `tools/pnpm-lock.yaml` as `pnpm-lock-tools.yaml` into the root directory for predictable builds and also add it to version control.
 
