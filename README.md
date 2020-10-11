@@ -19,6 +19,20 @@ There are three plugins:
 
 The main outputs are modules and libraries. Note that modules are not subprojects -- you should use actual Gradle subprojects, because they can be built in parallel. Subprojects use their parents' build tools by default.
 
+## Usage
+
+Usage in `build.gradle`:
+
+```
+plugins {
+	id "ee.keel.gradle.JsToolkitPlugin" version "1.1"
+}
+
+jsToolkit {
+	// for a quick start see https://github.com/siilike/gradle-javascript-toolkit/blob/master/examples/single/build.gradle
+}
+```
+
 ## Dependencies
 
   * Gradle that is supported by the gradle-ospackage-plugin, tested with Gradle 6.6
