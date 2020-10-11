@@ -117,7 +117,7 @@ module.exports = userConf =>
 	{
 		mode: v.NODE_ENV,
 		name: v.MODULE,
-		devtool: v.NODE_ENV == 'development' ? false : '#source-map',
+		devtool: v.NODE_ENV == 'development' ? false : 'source-map',
 		optimization:
 		{
 			minimize: false,
@@ -133,7 +133,7 @@ module.exports = userConf =>
 					[
 						(a) => nodeModulesRegex.test(a) && !babelIncludes.test(a),
 					],
-					loaders:
+					use:
 					[
 						{
 							loader: 'babel-loader',
@@ -163,7 +163,19 @@ module.exports = userConf =>
 			[
 				path.join(v.BUILD_DIR, 'node_modules'),
 				path.join(v.TOOLS_DIR, 'node_modules'),
-			])
+			]),
+		},
+		resolveLoader:
+		{
+			mainFields: mainFields,
+			modules:
+			[
+				'./node_modules',
+				path.join(v.PROJECT_DIR, 'libs-'+v.NODE_ENV),
+				path.join(v.PROJECT_DIR, 'libs'),
+				path.join(v.BUILD_DIR, 'node_modules'),
+				path.join(v.TOOLS_DIR, 'node_modules'),
+			],
 		},
 		recordsPath: path.join(v.RECORDS_DIR || v.WEBPACK_DIR, 'records-'+v.MODULE+'-'+v.ENV+'-'+v.BROWSERSLIST_ENV),
 		plugins:

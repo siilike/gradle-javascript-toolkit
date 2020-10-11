@@ -12,15 +12,14 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.internal.file.copy.CopySpecWrapper
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractCopyTask
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Compression
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
-import org.gradle.util.DeprecationLogger
 import org.redline_rpm.header.Os
 
 import com.netflix.gradle.plugins.packaging.SystemPackagingBasePlugin
@@ -36,6 +35,7 @@ import ee.keel.gradle.dsl.ModuleConfig
 import ee.keel.gradle.dsl.OutputConfig
 import ee.keel.gradle.dsl.RuntimeConfig
 import ee.keel.gradle.task.Deb
+import ee.keel.gradle.task.HJsonTask
 import ee.keel.gradle.task.NodeTask
 import ee.keel.gradle.task.PnpmInstallTask
 import ee.keel.gradle.task.PostCssTask
@@ -242,6 +242,20 @@ abstract class JavascriptPlugin implements Plugin<Project>
 			t.dependsOn cleanDist, cleanLibs, cleanModules, cleanBabelCache, cleanNodeModules, cleanManifests, cleanRecords, cleanPackageJson
 		})
 
+		def underlayDirs = [
+			project.layout.projectDirectory.dir("underlay"),
+			project.layout.projectDirectory.dir("underlay-development"),
+			project.layout.projectDirectory.dir("underlay-production"),
+		].findAll { it.asFile.exists() }
+
+		def libsDirs = [
+			project.layout.projectDirectory.dir("libs"),
+			project.layout.projectDirectory.dir("libs-development"),
+			project.layout.projectDirectory.dir("libs-production"),
+		].findAll { it.asFile.exists() }
+
+		def inputDirs = underlayDirs + libsDirs
+
 		/********************************** PACKAGES ************************************/
 
 /*
@@ -253,7 +267,16 @@ abstract class JavascriptPlugin implements Plugin<Project>
 		})
 */
 
+		def convertPackageJson = project.tasks.register("convertPackageJson", HJsonTask, { HJsonTask t ->
+			def input = project.file("package.hjson")
+			t.enabled = input.exists()
+			t.input.set(input)
+			t.output.set(project.file("package.json"))
+		});
+
 		def copyPackageJson = project.tasks.register("copyPackageJson", { Task t ->
+			t.dependsOn convertPackageJson
+
 			def files = [ "package.json", "pnpm-lock.yaml" ]
 
 			files.each { f ->
@@ -352,6 +375,10 @@ abstract class JavascriptPlugin implements Plugin<Project>
 					def webpackTask = project.tasks.register("buildLibrary${lcap}${ocap}${preset.capitalize()}", WebpackTask, { WebpackTask t ->
 						t.dependsOn installDependencies
 						t.finalizedBy writeLibraryVersion
+
+						libsDirs.each {
+							t.inputs.dir it
+						}
 
 						t.inputs.files getExt().webpack.map { it.inputs }
 						t.outputs.files t.manifestDirectory.file("manifest-${library}-${out.name}-${preset}.json")
@@ -513,6 +540,8 @@ abstract class JavascriptPlugin implements Plugin<Project>
 
 				((Collection<String>) out.presets.get()).each { String preset ->
 					def webpackTask = project.tasks.register("buildModule${mcap}${ocap}${preset.capitalize()}", WebpackTask, { WebpackTask t ->
+						t.enabled = jsInputDir.file("index.js").asFile.exists()
+
 						t.dependsOn installDependencies
 
 						t.env.set(out.name)
@@ -531,6 +560,10 @@ abstract class JavascriptPlugin implements Plugin<Project>
 							t.inputs.files t.manifestDirectory.file("manifest-${name}-${out.name}-${preset}.json")
 
 							t.dependsOn project.tasks.named("buildLibrary${name.capitalize()}${out.name.capitalize()}${preset.capitalize()}")
+						}
+
+						inputDirs.each {
+							t.inputs.dir it
 						}
 
 						t.inputs.dir jsInputDir
@@ -614,7 +647,7 @@ abstract class JavascriptPlugin implements Plugin<Project>
 			a("library", conf.copyFromLibrary)
 		}
 
-		def createArchiveTasks = { DistributionConfig conf, Map<Class, TaskProvider> archiveTasks, Provider<Directory> dst, Provider<String> version, String prefix, TaskProvider<? extends Task> distTask ->
+		def createArchiveTasks = { DistributionConfig conf, Map<Class, TaskProvider> archiveTasks, Provider<Directory> dst, Provider<String> version, String prefix, TaskProvider<? extends Task> distTask, boolean versionDependentPackageName ->
 			def dcap = conf.name.capitalize()
 			def pcap = prefix.capitalize()
 			Collection<TaskProvider> ret = []
@@ -652,10 +685,10 @@ abstract class JavascriptPlugin implements Plugin<Project>
 						c = conf.repo.get()
 
 						// via delegate to SystemPackagingExtension
-						t.packageName = "${conf.repo.get().name.get()}-${version.get()}"
+						t.packageName = versionDependentPackageName ? "${conf.repo.get().name.get()}-${version.get()}" : conf.repo.get().name.get()
 
-						DeprecationLogger.whileDisabled {
-							t.version = '1'
+						org.gradle.internal.deprecation.DeprecationLogger.whileDisabled {
+							t.version = versionDependentPackageName ? '1' : version.get()
 						}
 
 						t.os = Os.LINUX
@@ -685,7 +718,7 @@ abstract class JavascriptPlugin implements Plugin<Project>
 							((Collection<String>) conf.dependencies.get()).each { dep ->
 								def d = getExt().distributions.getByName(dep)
 								def n = d.repo.get().name.get()
-								def v = project.layout.buildDirectory.dir("dist/" + (d.library.get() ? "library" : "module") + "/${dep}/.version-${name.toLowerCase()}").get().asFile.text
+								def v = project.layout.buildDirectory.dir("dist/${dep}/.version-${name.toLowerCase()}").get().asFile.text
 
 								t.requires "${n}-${v}"
 							}
@@ -750,17 +783,19 @@ abstract class JavascriptPlugin implements Plugin<Project>
 
 			def dcap = conf.name.capitalize()
 			def version = conf.library.get() ? getExt().librariesVersion : getExt().version
-			def dst = project.layout.buildDirectory.dir("dist/" + (conf.library.get() ? "library" : "module") + "/${conf.name}")
+			def dst = project.layout.buildDirectory.dir("dist/${conf.name}")
+			def dstCopy = project.layout.buildDirectory.dir("dist2/${conf.name}")
 
-//			def copyTask = project.tasks.register("dist${dcap}Copy", Copy, { Copy t ->
-//				t.into dst.map { it.dir("archive") }
-//
-//				applySources(conf, t)
-//
-//				t
-//			})
+			def copyTask = project.tasks.register("dist${dcap}Copy", Copy, { Copy t ->
+				t.into dstCopy
+
+				applySources(conf, t)
+
+				t
+			})
 
 			def distTask = project.tasks.register("dist${dcap}All", { Task t ->
+				t.dependsOn copyTask
 				t
 			})
 
@@ -772,7 +807,7 @@ abstract class JavascriptPlugin implements Plugin<Project>
 				it
 			}
 
-			createArchiveTasks(conf, archiveTasks, dst, version, "", distTask)
+			createArchiveTasks(conf, archiveTasks, dst, version, "", distTask, true)
 
 			distAll.configure {
 				it.dependsOn distTask
@@ -796,7 +831,14 @@ abstract class JavascriptPlugin implements Plugin<Project>
 				t.inputs.file conf.template
 				t.outputs.dir outputDir
 
-				def template = new groovy.text.StreamingTemplateEngine().createTemplate(conf.template.get().asFile.text)
+				def templateFile = conf.template.get().asFile
+
+				if(!templateFile.exists())
+				{
+					throw new RuntimeException("Template file ${templateFile} does not exist!")
+				}
+
+				def template = new groovy.text.StreamingTemplateEngine().createTemplate(templateFile.text)
 				def presetNames = [] as Set
 
 				outputs.each { out ->
@@ -897,49 +939,54 @@ abstract class JavascriptPlugin implements Plugin<Project>
 				t
 			})
 
-			DistributionConfig dconf = conf.distribution.get()
+			if(conf.distribution.present)
+			{
+				DistributionConfig dconf = conf.distribution.get()
 
-			dconf.archive.get().name.convention(dconf.name)
-			dconf.repo.get().name.convention(dconf.name)
+				dconf.archive.get().name.convention(dconf.name)
+				dconf.repo.get().name.convention(dconf.name)
 
-			def dcap = dconf.name.capitalize()
-			def version = getExt().version
-			def dst = project.layout.buildDirectory.dir("dist/${dconf.name}")
+				def dcap = dconf.name.capitalize()
+				def version = getExt().version
+				def dst = project.layout.buildDirectory.dir("dist/runtime/${dconf.name}")
+				def dstCopy = project.layout.buildDirectory.dir("dist2/runtime/${dconf.name}")
 
-//			def copyTask = project.tasks.register("dist${dcap}RuntimeCopy", Copy, { Copy t ->
-//				t.dependsOn runtimeTask
-//
-//				t.into dst.map { it.dir("archive") }
-//
-//				applySources(dconf, t)
-//
-//				t
-//			})
+				def copyTask = project.tasks.register("dist${dcap}RuntimeCopy", Copy, { Copy t ->
+					t.dependsOn runtimeTask
 
-			def distTask = project.tasks.register("dist${dcap}RuntimeAll", { Task t ->
-				t
-			})
+					t.into dstCopy
 
-			Map<Class, TaskProvider> archiveTasks = [:].with {
-				put(Tar, distRuntimesTar)
-				put(Zip, distRuntimesZip)
-				put(Deb, distRuntimesDeb)
-				put(Rpm, distRuntimesRpm)
-				it
-			}
+					applySources(dconf, t)
 
-			createArchiveTasks(dconf, archiveTasks, dst, version, "runtime", distTask).each { t ->
-				t.configure { Task tt ->
-					tt.dependsOn runtimeTask
+					t
+				})
+
+				def distTask = project.tasks.register("dist${dcap}RuntimeAll", { Task t ->
+					t.dependsOn copyTask
+					t
+				})
+
+				Map<Class, TaskProvider> archiveTasks = [:].with {
+					put(Tar, distRuntimesTar)
+					put(Zip, distRuntimesZip)
+					put(Deb, distRuntimesDeb)
+					put(Rpm, distRuntimesRpm)
+					it
+				}
+
+				createArchiveTasks(dconf, archiveTasks, dst, version, "runtime", distTask, false).each { t ->
+					t.configure { Task tt ->
+						tt.dependsOn runtimeTask
+					}
+				}
+
+				distRuntimes.configure {
+					it.dependsOn distTask
 				}
 			}
 
 			buildRuntimes.configure {
 				it.dependsOn runtimeTask
-			}
-
-			distRuntimes.configure {
-				it.dependsOn distTask
 			}
 		}
 

@@ -19,7 +19,7 @@ import ee.keel.gradle.dsl.WithEnvironmentProperties
 import groovy.transform.CompileStatic
 
 @CompileStatic
-class PostCssTask extends NodeTask implements WithEnvironmentProperties
+class PostCssTask extends NodeTask
 {
 	private final static Logger logger = Logging.getLogger(PostCssTask)
 
@@ -47,6 +47,7 @@ class PostCssTask extends NodeTask implements WithEnvironmentProperties
 
 			inputs.property "environment", ext.environment
 
+			environmentDirProvider "TOOLS_DIR", ext.toolsDirectory
 			environmentDirProvider "NODE_PATH", ext.toolsDirectory.dir("node_modules")
 			environmentProperty "POSTCSS_ROOT", rootDirectory
 			environmentProperty "POSTCSS_CONFIG", config

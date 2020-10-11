@@ -6,10 +6,11 @@ const JSTK_DEBUG = process.env.JSTK_DEBUG || 'false'
 
 module.exports = function(api)
 {
- 	api.cache(true)
+	api.cache(true)
 
 	var config = 
 	{
+		"sourceType": "unambiguous",
 		"presets":
 		[
 			[
@@ -18,6 +19,7 @@ module.exports = function(api)
 					"useBuiltIns": "usage",
 					"corejs": 3,
 					"targets": BROWSERSLIST,
+					"modules": false,
 				}
 			],
 			[
@@ -35,6 +37,16 @@ module.exports = function(api)
 			"@babel/plugin-syntax-dynamic-import",
 			"@babel/plugin-transform-regenerator",
 			"@babel/plugin-proposal-object-rest-spread",
+
+/*
+			[
+				"@babel/plugin-transform-runtime",
+				{
+					"corejs": 3,
+					"useESModules": true,
+				}
+			],
+*/
 
 			[ TOOLS_DIR + "/babel/plugin-trace.js",
 			{

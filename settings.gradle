@@ -1,1 +1,10 @@
+pluginManagement {
+	repositories {
+		maven {
+			url 'file:///data1/mvn/'
+		}
+		gradlePluginPortal()
+	}
+}
+
 include 'jstoolkit'

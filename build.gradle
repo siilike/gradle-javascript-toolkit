@@ -1,14 +1,34 @@
 
 plugins {
 	id 'java-gradle-plugin'
-	id 'com.gradle.plugin-publish' version '0.10.1'
+	id 'com.gradle.plugin-publish' version '0.11.0'
+	id 'maven-publish'
 	id 'groovy'
 	id 'eclipse'
 }
 
+if(project.hasProperty("local"))
+{
+	publishing {
+		repositories {
+			maven {
+				url "file:///data1/mvn/"
+			}
+		}
+	}
+}
+
 description = 'Gradle JavaScript Toolkit'
 group = 'ee.keel.gradle'
-version = '1.0.2'
+
+if(project.hasProperty("local"))
+{
+	version = 'latest'
+}
+else
+{
+	version = '1.1'
+}
 
 sourceCompatibility = 1.8
 
@@ -23,7 +43,7 @@ repositories {
 }
 
 dependencies {
-	implementation "com.netflix.nebula:gradle-ospackage-plugin:8.1.0"
+	implementation "com.netflix.nebula:gradle-ospackage-plugin:8.4.1"
 	implementation "org.zeromq:jeromq:0.5.1"
 }
 

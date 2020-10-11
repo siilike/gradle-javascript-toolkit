@@ -20,6 +20,7 @@ class PnpmInstallTask extends PnpmTask
 
 		configure {
 			command.add("install")
+			command.add("--no-lock")
 		}
 
 		logging.captureStandardOutput(LogLevel.INFO)

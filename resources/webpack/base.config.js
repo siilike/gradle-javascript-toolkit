@@ -34,7 +34,7 @@ ret.libraries.forEach(l =>
 	ret.config.plugins.push(
 		new webpack.DllReferencePlugin(
 		{
-			context: '.',
+			context: path.resolve('.'),
 			manifest: path.join(v.MANIFEST_DIR || v.WEBPACK_DIR, "manifest-"+l+'-'+v.ENV+'-'+v.BROWSERSLIST_ENV+".json"),
 		}),
 	)
@@ -43,15 +43,16 @@ ret.libraries.forEach(l =>
 ret.config.optimization.splitChunks =
 {
 	chunks: 'async',
-	minSize: 0,
+	minSize: 999999999,
 	maxSize: 0,
 	minChunks: 1,
-	maxAsyncRequests: 5,
+	maxAsyncRequests: 4,
 	maxInitialRequests: 1,
-	name: true,
+// 	name: true,
 	cacheGroups:
 	{
 		vendors: false,
+		defaultVendors: false,
 		default:
 		{
 			minChunks: 1,

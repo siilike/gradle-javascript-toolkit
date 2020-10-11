@@ -5,8 +5,8 @@ This is a plugin for JavaScript development using Gradle as the build tool based
 
   * NodeJS
   * pnpm
-  * Webpack
-  * PostCSS
+  * Webpack (5+)
+  * PostCSS (8+)
   * Babel
 
 It also supports continuous building, splitting vendor and application code, Sentry, runtime presets, packaging and downloading required external software (node, pnpm).
@@ -21,7 +21,7 @@ The main outputs are modules and libraries. Note that modules are not subproject
 
 ## Dependencies
 
-  * Gradle that is supported by the gradle-ospackage-plugin, tested with Gradle 6
+  * Gradle that is supported by the gradle-ospackage-plugin, tested with Gradle 6.6
   * wget and tar for downloading and unpacking node and pnpm
   * sh for uploading assets to Sentry
 
@@ -258,6 +258,42 @@ Sentry.init(
 		frameRewriter,
 	]
 });
+```
+
+## Logging
+
+The plugin includes a processor for label-based logging. This means that you can simply write, for example:
+
+```
+warn: 'User', id, 'not found';
+```
+
+which would get transformed into
+
+```
+logger.logTransformed(level, self, context, ...args)
+```
+
+which by default would log all available context information along with the message:
+
+```
+[WARN] RuntimeClassName/FileName:ClassName:MethodName[anonymous@18] User 5 not found
+```
+
+and additionally send it to Sentry for the "warn" and "error" levels. Any error objects supplied as arguments are included for stack trace.
+
+Available labels are:
+
+  * `trace`
+  * `debug`
+  * `info`
+  * `warn`
+  * `error`
+
+A global `logger` object must be initialized first:
+
+```
+global.logger = require(TOOLS_DIR + "/logging/logger").default;
 ```
 
 # Tasks and options

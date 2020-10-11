@@ -148,6 +148,7 @@ abstract class ToolsPlugin implements Plugin<Project>
 				"postcss/config.js",
 				"postcss/postcss.config.js",
 				"sentry/FrameRewriter.js",
+				"logging/logger.js",
 			].each { f ->
 				def outFile = new File(getExt().toolsDirectory.asFile.get(), f)
 

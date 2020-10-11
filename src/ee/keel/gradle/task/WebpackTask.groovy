@@ -14,14 +14,12 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 
-import ee.keel.gradle.BasePlugin
 import ee.keel.gradle.Utils
 import ee.keel.gradle.dsl.JsToolkitExtension
-import ee.keel.gradle.dsl.WithEnvironmentProperties
 import groovy.transform.CompileStatic
 
 @CompileStatic
-class WebpackTask extends NodeTask implements WithEnvironmentProperties
+class WebpackTask extends NodeTask
 {
 	private final static Logger logger = Logging.getLogger(WebpackTask)
 
@@ -79,18 +77,17 @@ class WebpackTask extends NodeTask implements WithEnvironmentProperties
 			def jstk = Utils.getExt(getProject())
 			def t = jstk.toolsDirectory.get()
 
-			setWorkingDir(t.asFile.absoluteFile)
+//			setWorkingDir(t.asFile.absoluteFile)
+			setWorkingDir(project.buildDir)
+//			setWorkingDir(project.projectDir)
 
 			args t.file("node_modules/webpack/bin/webpack.js").asFile.absolutePath
 
 			if(project.logger.debugEnabled)
 			{
-				args '--display-exclude', '--display-modules', '--display-origins', '--display-reasons'
-
-				environment "JSTK_DEBUG", "true"
+				args '--stats-errors', '--stats-error-details', '--stats-error-stack', '--stats-chunks', '--stats-modules', '--stats-reasons', '--stats-warnings', '--stats-assets'
 			}
 
-			environmentProperty "NODE_ENV", jstk.environment
 			environmentProperty "ENV", env
 			environmentProperty "MODULE", module
 			environmentProperty "BROWSERSLIST_ENV", browsersListEnv
@@ -109,6 +106,7 @@ class WebpackTask extends NodeTask implements WithEnvironmentProperties
 		applyEnvironmentProperties()
 
 		environment "NODE_PATH", t.dir("node_modules").asFile.absolutePath
+//		environment "NODE_PATH", t.dir("node_modules").asFile.absolutePath+":"+project.buildDir.absolutePath+"/node_modules"
 		environment 'BUILD_DIR', project.buildDir.absolutePath
 		environment 'TOOLS_DIR', t.asFile.absolutePath
 		environment 'PROJECT_DIR', project.projectDir.absolutePath
@@ -144,7 +142,7 @@ class WebpackTask extends NodeTask implements WithEnvironmentProperties
 	@Internal
 	public LogLevel getStdoutLogLevel()
 	{
-		return LogLevel.DEBUG
+		return LogLevel.INFO
 	}
 
 	@Internal

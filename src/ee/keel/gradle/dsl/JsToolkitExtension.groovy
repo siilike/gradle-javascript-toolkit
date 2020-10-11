@@ -184,10 +184,12 @@ abstract class JsToolkitExtension extends JsToolkitModel
 			version "babel-loader", "latest"
 			version "core-js", "latest"
 			version "browserslist-useragent-regexp", "latest"
+//			version "@babel/runtime-corejs3", "latest"
 
+			version "postcss", "latest"
 			version "postcss-cli", "siilike/postcss-cli"
 			version "postcss-advanced-variables", "latest"
-			version "postcss-css-variables", "latest"
+			version "postcss-css-variables", "siilike/postcss-css-variables"
 			version "postcss-atroot", "latest"
 			version "postcss-extend-rule", "latest"
 			version "postcss-import", "latest"
@@ -197,15 +199,18 @@ abstract class JsToolkitExtension extends JsToolkitModel
 			version "postcss-property-lookup", "latest"
 			version "postcss-scss", "latest"
 			version "postcss-use", "latest"
+			version "postcss-url", "latest"
 			version "autoprefixer", "latest"
 			version "cssnano", "latest"
 
 			version "webpack", "latest"
 			version "webpack-cli", "latest"
-			version "webpack-visualizer-plugin", "latest"
+			version "webpack-visualizer-plugin", "siilike/webpack-visualizer"
 			version "terser", "latest"
 			version "terser-webpack-plugin", "latest"
 			version "webpack-babel-env-deps", "latest"
+
+			version "hjson", "latest"
 
 			version "@sentry/cli", "latest"
 
