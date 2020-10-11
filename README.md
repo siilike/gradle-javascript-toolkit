@@ -316,8 +316,10 @@ Available project options:
 
 For example:
 
-  gradle -Pdev buildFrontend
-  gradle -Pversion=5.master distAllDeb
+```
+gradle -Pdev buildFrontend
+gradle -Pversion=5.master distAllDeb
+```
 
 ## Handling versions
 
