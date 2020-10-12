@@ -202,7 +202,7 @@ distributions {
 		// register dependency on "libraries", so it will get installed when the module is installed
 		dependsOn "libraries"
 
-		// copy form the relevant module directory
+		// copy from the relevant module directory
 		copyModule("example") { Directory a ->
 			from {
 				fileTree(a) {
