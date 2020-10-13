@@ -478,35 +478,43 @@ abstract class JavascriptPlugin implements Plugin<Project>
 					}
 				}
 
-				t.inputs.dir cssInputDir
-				t.inputs.property "css", conf.css
+				Map<String, Object> css = conf.css.get()
+				List<String> files = null
 
+				if(cssInputDir.asFile.exists())
+				{
+					t.inputs.dir cssInputDir
+					files = project.fileTree(cssInputDir).files.collect { it.name }
+				}
+				else
+				{
+					files = []
+				}
+
+				files.addAll(css.keySet())
+
+				def sorted = files.sort { a, b ->
+					def n1 = (a =~ /^\d+/) ? (a =~ /^\d+/)[-1] as Integer : 1000000
+					def n2 = (b =~ /^\d+/) ? (b =~ /^\d+/)[-1] as Integer : 1000000
+					return n1 == n2 ? a <=> b : n1 <=> n2;
+				}
+
+				def inputFiles = sorted.collect { String fn ->
+					def f = cssInputDir.file(fn).asFile
+
+					if(f.exists())
+					{
+						return f
+					}
+
+					return project.file(css.get(fn))
+				}
+
+				t.inputs.files inputFiles
 				t.outputs.files cssTmpFile
 
 				t.doFirst {
 					moduleDir.get().asFile.mkdirs()
-
-					Map<String, Object> css = conf.css.get()
-
-					def files = project.fileTree(cssInputDir).files.collect { it.name }
-					files.addAll(css.keySet())
-
-					def sorted = files.sort { a, b ->
-						def n1 = (a =~ /^\d+/) ? (a =~ /^\d+/)[-1] as Integer : 1000000
-						def n2 = (b =~ /^\d+/) ? (b =~ /^\d+/)[-1] as Integer : 1000000
-						return n1 == n2 ? a <=> b : n1 <=> n2;
-					}
-
-					def inputFiles = sorted.collect { String fn ->
-						def f = cssInputDir.file(fn).asFile
-
-						if(f.exists())
-						{
-							return f
-						}
-
-						return project.file(css.get(fn))
-					}
 
 					def imports = inputFiles.collect { "@import \"${it.absolutePath}\";" }.join("\n")
 

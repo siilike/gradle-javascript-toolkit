@@ -15,7 +15,9 @@ import org.gradle.deployment.internal.Deployment
 import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.deployment.internal.DeploymentRegistry.ChangeBehavior
+import org.gradle.process.internal.DefaultExecSpec
 import org.gradle.process.internal.ExecAction
+import org.gradle.process.internal.ExecException
 
 import ee.keel.gradle.StreamLogger
 import ee.keel.gradle.ZMQHandler
@@ -65,17 +67,20 @@ public class ContinuousExecTask extends Exec
 
 			if(!deploymentHandle)
 			{
-				def field = AbstractExecTask.getDeclaredField("execAction")
+				def field = AbstractExecTask.getDeclaredField("execSpec")
 				field.setAccessible(true)
-				def action = (ExecAction) field.get(this)
+				def taskExecSpec = (DefaultExecSpec) field.get(this)
+
+				def action = execActionFactory.newExecAction()
+				taskExecSpec.copyTo(action)
 
 				zmq = new ZMQHandler()
 				zmq.init()
 
 				l = zmq.getStatusSync(getPath())
 
-				environment "ZMQ_ADDR", "tcp://127.0.0.1:"+zmq.port
-				environment "ZMQ_ID", getPath()
+				action.environment "ZMQ_ADDR", "tcp://127.0.0.1:"+zmq.port
+				action.environment "ZMQ_ID", getPath()
 
 				if(continuousRunning() && !l.isRunning())
 				{
@@ -141,7 +146,11 @@ public class ContinuousExecTask extends Exec
 			thread = new Thread() {
 				public void run()
 				{
-					execAction.execute()
+					logger.lifecycle("Executing {} {}", execAction.executable, execAction.args)
+
+					def result = execAction.execute()
+
+					throw new ExecException("Process exited with status "+result.getExitValue())
 				}
 			};
 
