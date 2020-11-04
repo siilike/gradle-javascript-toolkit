@@ -26,6 +26,9 @@ class NodeTask extends ContinuousExecTask implements WithEnvironmentProperties
 
 			environmentProperty "NODE_ENV", jstk.environment
 
+			environment 'BUILD_DIR', project.buildDir.absolutePath
+			environment 'PROJECT_DIR', project.projectDir.absolutePath
+
 			if(project.logger.debugEnabled)
 			{
 				environment "JSTK_DEBUG", "true"

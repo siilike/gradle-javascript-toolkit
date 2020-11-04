@@ -145,10 +145,14 @@ abstract class ToolsPlugin implements Plugin<Project>
 				"webpack/config.js",
 				"webpack/config.libs.js",
 				"webpack/plugin.js",
+				"postcss/base.js",
+				"postcss/base.config.js",
 				"postcss/config.js",
 				"postcss/postcss.config.js",
 				"sentry/FrameRewriter.js",
 				"logging/logger.js",
+				"certs/cert.key",
+				"certs/cert.crt",
 			].each { f ->
 				def outFile = new File(getExt().toolsDirectory.asFile.get(), f)
 

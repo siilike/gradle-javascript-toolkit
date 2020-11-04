@@ -115,8 +115,6 @@ abstract class BabelConfig extends JsToolkitModel
 				"production": "> 0.5%, ie 11, Firefox ESR, not dead"
 			]
 		})
-
-		reactPragma.convention("React.createElement")
 	}
 
 	void preset(String name, String value)

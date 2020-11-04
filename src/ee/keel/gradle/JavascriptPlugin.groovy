@@ -268,6 +268,8 @@ abstract class JavascriptPlugin implements Plugin<Project>
 */
 
 		def convertPackageJson = project.tasks.register("convertPackageJson", HJsonTask, { HJsonTask t ->
+			t.dependsOn ToolsPlugin.ENSURE_BUILD_TOOLS_TASK
+
 			def input = project.file("package.hjson")
 			t.enabled = input.exists()
 			t.input.set(input)
@@ -526,11 +528,14 @@ abstract class JavascriptPlugin implements Plugin<Project>
 				t.dependsOn ToolsPlugin.ENSURE_BUILD_TOOLS_TASK
 				t.dependsOn prepareModule
 
+				t.module.set(module)
 				t.input.add(cssTmpFile.get().asFile)
 				t.output.set(cssOutputFile)
 				t.config.value(configProvider("postcss", module, false))
 				t.browsers.convention(project.provider { getExt().babel.get().presets.get().get('production') })
-				t.continuous.set(project.gradle.startParameter.continuous)
+				t.continuous.set(conf.continuous)
+				t.prepend.set(conf.prependCss.map({ it.collect { String f -> project.layout.projectDirectory.file(f).asFile } }))
+				t.append.set(conf.appendCss.map({ it.collect { String f -> project.layout.projectDirectory.file(f).asFile } }))
 
 				t
 			})
@@ -559,7 +564,7 @@ abstract class JavascriptPlugin implements Plugin<Project>
 						t.config.value(configProvider("webpack", module))
 						t.babelConfig.value(configProvider("babel", module))
 						t.outputDirectory.set(moduleDir.map { it.dir(out.name) })
-						t.continuous.set(project.gradle.startParameter.continuous)
+						t.continuous.set(conf.continuous)
 
 						t.environmentProperty "VERSION", getExt().version
 						t.environmentProvider "SENTRY_RELEASE", getExt().sentry.map { it.release.get() }
@@ -913,7 +918,8 @@ abstract class JavascriptPlugin implements Plugin<Project>
 					}
 
 					def presetRegexes = presetNames.collectEntries {
-						[ it, project.layout.buildDirectory.file("regex/${it}.regex").get().asFile.text.trim() ]
+						def r = project.layout.buildDirectory.file("regex/${it}.regex").get().asFile.text.trim()
+						[ it, r.substring(1, r.length()-1) ]
 					}
 
 					if(!presetRegexes.containsKey(conf.defaultPreset.get()))

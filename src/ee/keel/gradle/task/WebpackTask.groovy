@@ -41,7 +41,7 @@ class WebpackTask extends NodeTask
 	final RegularFileProperty babelConfig = project.objects.fileProperty()
 
 	@Input
-	final Property<String> reactPragma = project.objects.property(String).convention(jstk.babel.map { it.reactPragma.get() })
+	final Property<String> reactPragma = project.objects.property(String).convention(jstk.babel.map { it.reactPragma.getOrElse("") })
 
 	@Input
 	final Property<Boolean> alwaysTranspile = project.objects.property(Boolean).convention(jstk.webpack.map { it.alwaysTranspile.get() })
@@ -68,6 +68,9 @@ class WebpackTask extends NodeTask
 	@Internal
 	final DirectoryProperty manifestDirectory = project.objects.directoryProperty().convention(project.layout.buildDirectory.dir("manifest"))
 
+	@Input
+	final Property<Boolean> hmr = project.objects.property(Boolean).convention(project.hasProperty("hmr"))
+
 	@Inject
 	public WebpackTask()
 	{
@@ -88,6 +91,9 @@ class WebpackTask extends NodeTask
 				args '--stats-errors', '--stats-error-details', '--stats-error-stack', '--stats-chunks', '--stats-modules', '--stats-reasons', '--stats-warnings', '--stats-assets'
 			}
 
+			environmentDirProvider "TOOLS_DIR", jstk.toolsDirectory
+			environmentDirProvider "NODE_PATH", jstk.toolsDirectory.dir("node_modules")
+
 			environmentProperty "ENV", env
 			environmentProperty "MODULE", module
 			environmentProperty "BROWSERSLIST_ENV", browsersListEnv
@@ -95,21 +101,15 @@ class WebpackTask extends NodeTask
 			environmentProperty "PREFER_MODULES", preferModules
 			environmentProperty "ALWAYS_TRANSPILE", alwaysTranspile
 			environmentProperty "REACT_PRAGMA", reactPragma
+			environmentProperty "HMR", hmr
 		}
 	}
 
 	@Override
 	protected void exec()
 	{
-		def t = jstk.toolsDirectory.get()
-
 		applyEnvironmentProperties()
 
-		environment "NODE_PATH", t.dir("node_modules").asFile.absolutePath
-//		environment "NODE_PATH", t.dir("node_modules").asFile.absolutePath+":"+project.buildDir.absolutePath+"/node_modules"
-		environment 'BUILD_DIR', project.buildDir.absolutePath
-		environment 'TOOLS_DIR', t.asFile.absolutePath
-		environment 'PROJECT_DIR', project.projectDir.absolutePath
 		environment 'BABEL_CACHE_DIR', new File(project.buildDir, ".babel").absolutePath
 		environment 'OUTPUT_DIR', outputDirectory.asFile.get().absolutePath
 		environment 'MANIFEST_DIR', manifestDirectory.asFile.get().absolutePath

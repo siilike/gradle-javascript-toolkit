@@ -1,8 +1,10 @@
 
+const NODE_ENV = process.env.NODE_ENV || 'production'
 const TOOLS_DIR = process.env.TOOLS_DIR || './tools'
 const BROWSERSLIST = process.env.BROWSERSLIST || '> 0.5%, IE11'
-const REACT_PRAGMA = process.env.REACT_PRAGMA || 'React.createElement'
+const REACT_PRAGMA = process.env.REACT_PRAGMA
 const JSTK_DEBUG = process.env.JSTK_DEBUG || 'false'
+const HMR = process.env.HMR || 'false'
 
 module.exports = function(api)
 {
@@ -23,9 +25,11 @@ module.exports = function(api)
 				}
 			],
 			[
-				"@babel/preset-react",
+				"@babel/preset-react", REACT_PRAGMA ?
 				{
 					"pragma": REACT_PRAGMA,
+				} : {
+					"runtime": "automatic",
 				}
 			],
 		],
@@ -56,6 +60,11 @@ module.exports = function(api)
 				},
 			}]
 		]
+	}
+
+	if(NODE_ENV === 'development' && HMR === 'true')
+	{
+		config.plugins.push("react-refresh/babel");
 	}
 
 	if(JSTK_DEBUG === 'true')

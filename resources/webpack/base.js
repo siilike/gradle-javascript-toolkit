@@ -31,6 +31,7 @@ module.exports = userConf =>
 		'PREFER_MODULES': true,
 		'JSTK_DEBUG': false,
 		'ALWAYS_TRANSPILE': false,
+		'HMR': false,
 	}
 
 	Object.entries(envVars).forEach(([ a, required ]) =>
@@ -117,7 +118,7 @@ module.exports = userConf =>
 	{
 		mode: v.NODE_ENV,
 		name: v.MODULE,
-		devtool: v.NODE_ENV == 'development' ? false : 'source-map',
+		devtool: v.NODE_ENV == 'development' ? 'eval-source-map' : 'source-map',
 		optimization:
 		{
 			minimize: false,
@@ -129,6 +130,10 @@ module.exports = userConf =>
 			[
 				{
 					test: /\.(mjs|js|jsx)$/,
+					resolve:
+					{
+						fullySpecified: false,
+					},
 					exclude: v.ALWAYS_TRANSPILE === 'true' ? (a) => false :
 					[
 						(a) => nodeModulesRegex.test(a) && !babelIncludes.test(a),
@@ -139,7 +144,7 @@ module.exports = userConf =>
 							loader: 'babel-loader',
 							options: babelOptions,
 						},
-					],
+					]
 				},
 			],
 		},
@@ -147,6 +152,7 @@ module.exports = userConf =>
 		{
 			mainFields: mainFields,
 			extensions: [ '.js', '.jsx' ],
+			fullySpecified: false,
 			modules:
 			[
 				'./node_modules',
@@ -168,6 +174,7 @@ module.exports = userConf =>
 		resolveLoader:
 		{
 			mainFields: mainFields,
+			fullySpecified: false,
 			modules:
 			[
 				'./node_modules',
@@ -207,29 +214,11 @@ module.exports = userConf =>
 		[
 			new TerserJsPlugin(
 			{
-				cache: v.BUILD_DIR+'/.terser',
 				parallel: true,
-				sourceMap: true,
 				terserOptions:
 				{
 					compress:
 					{
-						arrows: false,
-						collapse_vars: false,
-						comparisons: false,
-						computed_props: false,
-						hoist_funs: false,
-						hoist_props: false,
-						hoist_vars: false,
-						inline: false,
-						loops: false,
-						negate_iife: false,
-						properties: false,
-						reduce_funcs: false,
-						reduce_vars: false,
-						switches: false,
-						toplevel: false,
-						typeofs: false,
 					},
 					output:
 					{

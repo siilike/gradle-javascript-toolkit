@@ -60,7 +60,7 @@ trait WithEnvironmentProperties
 	void applyEnvironmentProperties()
 	{
 		envProps.each { k, v ->
-			def a = v.get()
+			def a = v.getOrElse("")
 
 			if(a instanceof File)
 			{
@@ -72,7 +72,7 @@ trait WithEnvironmentProperties
 			}
 			else
 			{
-				environment k, v.get()
+				environment k, a
 			}
 		}
 	}

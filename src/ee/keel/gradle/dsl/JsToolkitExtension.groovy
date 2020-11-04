@@ -200,6 +200,7 @@ abstract class JsToolkitExtension extends JsToolkitModel
 			version "postcss-scss", "latest"
 			version "postcss-use", "latest"
 			version "postcss-url", "latest"
+			version "postcss-push", "latest"
 			version "autoprefixer", "latest"
 			version "cssnano", "latest"
 
@@ -209,6 +210,10 @@ abstract class JsToolkitExtension extends JsToolkitModel
 			version "terser", "latest"
 			version "terser-webpack-plugin", "latest"
 			version "webpack-babel-env-deps", "latest"
+
+			version "react-refresh", "latest"
+			version "@pmmmwh/react-refresh-webpack-plugin", "latest"
+			version "webpack-plugin-serve", "latest"
 
 			version "hjson", "latest"
 

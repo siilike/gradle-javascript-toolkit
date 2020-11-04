@@ -1,12 +1,19 @@
 
 const webpack = require('webpack')
 const path = require('path')
+const fs = require('fs')
 
 const TOOLS_DIR = process.env.TOOLS_DIR || 'tools'
 
 const JsToolkitPlugin = require(TOOLS_DIR + '/webpack/plugin.js')
 
+const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const { WebpackPluginServe } = require('webpack-plugin-serve');
+
+
 var ret = require(TOOLS_DIR + '/webpack/base.js')()
+
+var nodeModulesRegex = /node_modules/
 
 const v = ret.vars
 
@@ -60,6 +67,28 @@ ret.config.optimization.splitChunks =
 			reuseExistingChunk: true,
 		},
 	},
+}
+
+if(v.NODE_ENV === 'development' && v.HMR === 'true')
+{
+	ret.config.entry.main.unshift('webpack-plugin-serve/client');
+
+	ret.config.plugins.push(new ReactRefreshPlugin(
+	{
+		forceEnable: true,
+		exclude: nodeModulesRegex,
+	}));
+
+	ret.config.plugins.push(new WebpackPluginServe(
+	{
+		host: '127.0.0.1',
+		port: 0,
+		https:
+		{
+			key: fs.readFileSync(TOOLS_DIR + '/certs/cert.key'),
+			cert: fs.readFileSync(TOOLS_DIR + '/certs/cert.crt'),
+		},
+	}));
 }
 
 ret.config.plugins.push(

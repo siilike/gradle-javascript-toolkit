@@ -23,12 +23,22 @@ abstract class ModuleConfig extends NamedJsToolkitModel implements WithOutputs, 
 	@Input
 	final MapProperty<String, Object> css = objectFactory.mapProperty(String, Object)
 
+	@Input
+	final ListProperty<String> prependCss = objectFactory.listProperty(String)
+
+	@Input
+	final ListProperty<String> appendCss = objectFactory.listProperty(String)
+
+	@Input
+	final Property<Boolean> continuous = objectFactory.property(Boolean)
+
 	@Inject
 	ModuleConfig(String name, Project project)
 	{
 		super(name, project)
 
 		babel.convention(objectFactory.newInstance(BabelConfig, project))
+		continuous.convention(project.gradle.startParameter.continuous)
 	}
 
 	void css(String name, source)
@@ -39,5 +49,15 @@ abstract class ModuleConfig extends NamedJsToolkitModel implements WithOutputs, 
 	void library(String name)
 	{
 		libraries.add(name)
+	}
+
+	void appendCss(String name)
+	{
+		appendCss.add(name)
+	}
+
+	void prependCss(String name)
+	{
+		prependCss.add(name)
 	}
 }
