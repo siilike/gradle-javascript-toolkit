@@ -185,6 +185,8 @@ abstract class JsToolkitExtension extends JsToolkitModel
 			version "core-js", "latest"
 			version "browserslist-useragent-regexp", "latest"
 //			version "@babel/runtime-corejs3", "latest"
+			version "@babel/runtime", "latest"
+			version "@loadable/babel-plugin", "latest"
 
 			version "postcss", "latest"
 			version "postcss-cli", "siilike/postcss-cli"
@@ -204,16 +206,20 @@ abstract class JsToolkitExtension extends JsToolkitModel
 			version "autoprefixer", "latest"
 			version "cssnano", "latest"
 
-			version "webpack", "latest"
+			version "webpack", "^5"
 			version "webpack-cli", "latest"
-			version "webpack-visualizer-plugin", "siilike/webpack-visualizer"
 			version "terser", "latest"
 			version "terser-webpack-plugin", "latest"
 			version "webpack-babel-env-deps", "latest"
+			version "enhanced-resolve", "latest"
+			version "html-webpack-plugin", "latest"
+
+			version "webpack-visualizer-plugin", "siilike/webpack-visualizer"
+			version "madge", "latest"
 
 			version "react-refresh", "latest"
 			version "@pmmmwh/react-refresh-webpack-plugin", "latest"
-			version "webpack-plugin-serve", "latest"
+			version "webpack-plugin-serve", "siilike/webpack-plugin-serve"
 
 			version "hjson", "latest"
 

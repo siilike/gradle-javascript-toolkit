@@ -22,6 +22,7 @@ module.exports = function(api)
 					"corejs": 3,
 					"targets": BROWSERSLIST,
 					"modules": false,
+					"shippedProposals": true,
 				}
 			],
 			[
@@ -36,11 +37,10 @@ module.exports = function(api)
 		"plugins":
 		[
 			[ "@babel/plugin-proposal-decorators", { "legacy": true } ],
-			[ "@babel/plugin-proposal-class-properties", { "loose": true } ],
-
-			"@babel/plugin-syntax-dynamic-import",
-			"@babel/plugin-transform-regenerator",
-			"@babel/plugin-proposal-object-rest-spread",
+			[ "@babel/plugin-syntax-dynamic-import", {} ],
+			[ "@babel/plugin-transform-regenerator", {} ],
+			[ "@babel/plugin-proposal-object-rest-spread", {}, ],
+			[ "@loadable/babel-plugin", {} ],
 
 /*
 			[
@@ -52,13 +52,7 @@ module.exports = function(api)
 			],
 */
 
-			[ TOOLS_DIR + "/babel/plugin-trace.js",
-			{
-				"strip":
-				{
-					"trace0": true,
-				},
-			}]
+			[ TOOLS_DIR + "/babel/plugin-trace.js", {} ]
 		]
 	}
 

@@ -6,6 +6,8 @@ const fs = require('fs')
 const Visualizer = require('webpack-visualizer-plugin')
 const TerserJsPlugin = require('terser-webpack-plugin')
 
+const FULLY_SPECIFIED = false
+
 module.exports = userConf =>
 {
 	const v = {}
@@ -32,6 +34,9 @@ module.exports = userConf =>
 		'JSTK_DEBUG': false,
 		'ALWAYS_TRANSPILE': false,
 		'HMR': false,
+		'RESOLVE_FILE': false,
+		'SOURCE_MAP': false,
+		'CONTINUOUS': false,
 	}
 
 	Object.entries(envVars).forEach(([ a, required ]) =>
@@ -68,6 +73,11 @@ module.exports = userConf =>
 				console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> WEBPACK CONFIGURATION >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
 				console.log(JSON.stringify(config, null, 2))
 				console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< WEBPACK CONFIGURATION <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+			}
+
+			if(v.RESOLVE_FILE)
+			{
+				fs.writeFileSync(v.RESOLVE_FILE, "module.exports = { resolve: \n\n" + JSON.stringify(config.resolve, null, 2) + "\n\n}")
 			}
 
 			return config
@@ -118,7 +128,7 @@ module.exports = userConf =>
 	{
 		mode: v.NODE_ENV,
 		name: v.MODULE,
-		devtool: v.NODE_ENV == 'development' ? 'eval-source-map' : 'source-map',
+		devtool: v.SOURCE_MAP || false,
 		optimization:
 		{
 			minimize: false,
@@ -129,10 +139,10 @@ module.exports = userConf =>
 			rules:
 			[
 				{
-					test: /\.(mjs|js|jsx)$/,
+					test: /\.(mjs|cjs|js|jsx)$/,
 					resolve:
 					{
-						fullySpecified: false,
+						fullySpecified: FULLY_SPECIFIED,
 					},
 					exclude: v.ALWAYS_TRANSPILE === 'true' ? (a) => false :
 					[
@@ -151,8 +161,8 @@ module.exports = userConf =>
 		resolve:
 		{
 			mainFields: mainFields,
-			extensions: [ '.js', '.jsx' ],
-			fullySpecified: false,
+			extensions: [ '.mjs', '.cjs', '.jsx', '.js' ],
+			fullySpecified: FULLY_SPECIFIED,
 			modules:
 			[
 				'./node_modules',
@@ -170,11 +180,13 @@ module.exports = userConf =>
 				path.join(v.BUILD_DIR, 'node_modules'),
 				path.join(v.TOOLS_DIR, 'node_modules'),
 			]),
+			fallback: {},
+			alias: {},
 		},
 		resolveLoader:
 		{
 			mainFields: mainFields,
-			fullySpecified: false,
+			fullySpecified: FULLY_SPECIFIED,
 			modules:
 			[
 				'./node_modules',
@@ -197,6 +209,7 @@ module.exports = userConf =>
 				'OWN_FILE_PREFIXES': JSON.stringify([ v.MODULE ].concat(libraries)),
 				'TOOLS_DIR': JSON.stringify(v.TOOLS_DIR),
 
+				'MODULE': JSON.stringify(v.MODULE),
 				'ENV': JSON.stringify(v.ENV),
 			}),
 
@@ -204,7 +217,13 @@ module.exports = userConf =>
 			{
 				filename: "../webpack-"+v.MODULE+'-'+v.ENV+'-'+v.BROWSERSLIST_ENV+".html",
 			}),
-		]
+		],
+		output:
+		{
+			chunkLoadTimeout: 20000,
+			crossOriginLoading: 'anonymous',
+			hotUpdateChunkFilename: v.MODULE+'.hmr-[id]-[hash].js',
+		}
 	})
 
 	if(v.MINIFY === 'true' && v.NODE_ENV !== 'development')

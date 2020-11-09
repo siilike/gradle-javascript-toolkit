@@ -1,15 +1,3 @@
-/*
- * based on https://github.com/codemix/babel-plugin-trace
- *
- * Copyright (c) 2016 codemix.com
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- */
-
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -155,8 +143,6 @@ var LogLevel = function () {
   });
   return LogLevel;
 }();
-
-var levels = ['trace0', 'trace', 'debug', 'info', 'warn', 'error'];
 
 var Visitors = function () {
   function Visitors(input) {
@@ -321,6 +307,15 @@ var Message = function () {
 var $handled = Symbol('handled');
 var $normalized = Symbol('normalized');
 
+var DEFAULT_LEVELS = {
+  'trace0': true,
+  'trace': false,
+  'debug': false,
+  'info': false,
+  'warn': false,
+  'error': false
+};
+
 var PRESERVE_CONTEXTS = normalizeEnv(process.env.TRACE_CONTEXT);
 var PRESERVE_FILES = normalizeEnv(process.env.TRACE_FILE);
 var PRESERVE_LEVELS = normalizeEnv(process.env.TRACE_LEVEL);
@@ -443,12 +438,13 @@ function getLogFunction(_ref13, logLevel) {
     }
 
     if (t.isSequenceExpression(message.content)) {
-      return _ref5(t.callExpression(t.memberExpression(t.identifier('logger'), t.identifier('logTransformed')), [t.stringLiteral(logLevel), t.identifier('this'), t.stringLiteral(metadata.context)].concat(message.content.expressions)));
+      return _ref5(t.callExpression(t.memberExpression(t.memberExpression(t.identifier('logger'), t.identifier(logLevel)), t.identifier('apply')), [t.memberExpression(t.identifier('logger'), t.identifier(logLevel)), t.callExpression(t.memberExpression(t.identifier('logger'), t.identifier('params')), [t.stringLiteral(logLevel), t.identifier('this'), t.stringLiteral(metadata.context[0]), t.stringLiteral(metadata.context[1])].concat(message.content.expressions))]));
     } else {
-      return _ref5(expression('logger.logTransformed(LEVEL, SELF, PREFIX, CONTENT)', template)({
+      return _ref5(expression('logger[LEVEL].apply(logger[LEVEL], logger.params(LEVEL, SELF, FILE, CONTEXT, CONTENT))', template)({
         LEVEL: t.stringLiteral(logLevel),
         SELF: t.identifier('this'),
-        PREFIX: t.stringLiteral(metadata.context),
+        FILE: t.stringLiteral(metadata.context[0]),
+        CONTEXT: t.stringLiteral(metadata.context[1]),
         CONTENT: message.content
       }));
     }
@@ -481,7 +477,7 @@ function normalizeOpts(babel, opts) {
   if (!opts.aliases) {
     opts.aliases = {};
 
-    levels.forEach(function (a) {
+    Object.keys(DEFAULT_LEVELS).forEach(function (a) {
       opts.aliases[a] = getLogFunction(babel, a);
     });
   } else {
@@ -512,7 +508,14 @@ function normalizeOpts(babel, opts) {
     });
   }
   if (opts.strip === undefined) {
-    opts.strip = false;
+    opts.strip = {};
+
+    for (var level in DEFAULT_LEVELS) {
+      opts.strip[level] = {
+        production: DEFAULT_LEVELS[level],
+        development: false
+      };
+    }
   }
   opts[$normalized] = true;
   return _ref6(opts);
@@ -706,7 +709,14 @@ function collectMetadata(path, opts) {
     }
   }
 
-  var context = prefix + ':' + parentName;
+  var context = [prefix, parentName];
+
+  if (!(Array.isArray(context) && context.every(function (item) {
+    return typeof item === 'string';
+  }))) {
+    throw new TypeError('Value of variable "context" violates contract.\n\nExpected:\nstring[]\n\nGot:\n' + _inspect(context));
+  }
+
   return _ref9({ indent: indent, prefix: prefix, parentName: parentName, context: context, hasStartMessage: hasStartMessage, isStartMessage: isStartMessage, filename: filename, dirname: dirname, basename: basename, extname: extname });
 }
 

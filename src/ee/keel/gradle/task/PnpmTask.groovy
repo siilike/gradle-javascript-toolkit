@@ -33,6 +33,7 @@ class PnpmTask extends NodeTask
 			else
 			{
 				setExecutable(pnpmPath)
+				setArgs([])
 			}
 		}
 	}

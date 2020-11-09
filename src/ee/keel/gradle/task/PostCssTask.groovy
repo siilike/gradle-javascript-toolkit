@@ -55,7 +55,6 @@ class PostCssTask extends NodeTask
 			def jstk = Utils.getExt(project)
 
 			environmentDirProvider "TOOLS_DIR", jstk.toolsDirectory
-			environmentDirProvider "NODE_PATH", jstk.toolsDirectory.dir("node_modules")
 
 			environmentProperty "MODULE", module
 			environmentProperty "POSTCSS_ROOT", rootDirectory
@@ -71,6 +70,8 @@ class PostCssTask extends NodeTask
 	protected void exec()
 	{
 		def ext = Utils.getExt(project)
+
+		environment "NODE_PATH", ext.toolsDirectory.dir("node_modules").get().asFile.absolutePath
 
 		applyEnvironmentProperties()
 

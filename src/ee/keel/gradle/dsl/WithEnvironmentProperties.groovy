@@ -60,20 +60,26 @@ trait WithEnvironmentProperties
 	void applyEnvironmentProperties()
 	{
 		envProps.each { k, v ->
-			def a = v.getOrElse("")
+			applyEnvironmentProperty(k, v)
+		}
+	}
 
-			if(a instanceof File)
-			{
-				environment k, a.absolutePath
-			}
-			else if(a instanceof FileSystemLocation)
-			{
-				environment k, a.asFile.absolutePath
-			}
-			else
-			{
-				environment k, a
-			}
+	@CompileDynamic
+	void applyEnvironmentProperty(k, v)
+	{
+		def a = v.getOrElse("")
+
+		if(a instanceof File)
+		{
+			environment k, a.absolutePath
+		}
+		else if(a instanceof FileSystemLocation)
+		{
+			environment k, a.asFile.absolutePath
+		}
+		else
+		{
+			environment k, a
 		}
 	}
 }

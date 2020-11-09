@@ -1,9 +1,60 @@
 
-var Sentry = require('@sentry/browser');
+var Sentry = require('@sentry/browser')
+
+const ID_PADDING = 25
+const CTX_PADDING = 50
+
+const config =
+{
+	trace0:
+	{
+		label: 'trace0',
+		console: 'debug',
+		enabled: false,
+		labelColor: 'gray',
+	},
+	trace:
+	{
+		label: 'trace',
+		console: 'debug',
+		breadCrumb: Sentry.Severity.Debug,
+		labelColor: 'lightgray',
+	},
+	debug:
+	{
+		label: 'debug',
+		console: 'log',
+		breadCrumb: Sentry.Severity.Debug,
+		labelColor: 'gray',
+	},
+	info:
+	{
+		label: 'info ',
+		console: 'info',
+		breadCrumb: Sentry.Severity.Info,
+		labelColor: 'blue',
+	},
+	warn:
+	{
+		label: 'warn ',
+		console: 'warn',
+		report: true,
+		breadCrumb: Sentry.Severity.Warning,
+		labelColor: 'darkorange',
+	},
+	error:
+	{
+		label: 'error',
+		console: 'error',
+		report: true,
+		breadCrumb: Sentry.Severity.Critical,
+		labelColor: 'red',
+	},
+}
 
 const getCircularReplacer = () =>
 {
-	const seen = new WeakSet();
+	const seen = new WeakSet()
 
 	return (key, value) =>
 	{
@@ -11,151 +62,176 @@ const getCircularReplacer = () =>
 		{
 			if(seen.has(value))
 			{
-				return;
+				return
 			}
 
-			seen.add(value);
+			seen.add(value)
 		}
 
-		return value;
-	};
-};
+		return value
+	}
+}
 
-function consoleDelegate(level, params, offset)
+var prettyLogs = false
+
+if(ENV == "client")
 {
-	var fn = console.log;
-
-	if(level == "warn")
+	console.dir(Object.defineProperty(new Image(), 'id',
 	{
-		fn = console.warn;
-	}
-	else if(level == "error")
-	{
-		fn = console.error;
-	}
-	else if(level == "info")
-	{
-		fn = console.info;
-	}
-	else if(level == "trace")
-	{
-		fn = console.debug;
-	}
-
-	if(offset)
-	{
-		params = Array.prototype.slice.call(params, offset);
-	}
-
-	if(level == "error" || level == "warn")
-	{
-		var isObject = function(obj)
+		get: () =>
 		{
-			return !!obj && obj instanceof Object && !(obj instanceof Array)
-		};
+			prettyLogs = true
+			return 'console-open-test'
+		}
+	}))
+}
 
-		var msgParams = params.slice(1);
-		var errors = [];
+function logger(delegate = console)
+{
+	Object.entries(config).forEach(([ k, a ]) =>
+	{
+		this[k] = a.enabled !== false ? console[a.console].bind(console) : function() {}
+	})
 
-		var msg = msgParams.map(a =>
+	this.params = function(level, self, file, context)
+	{
+		var conf = config[level]
+
+		if(conf.enabled === false)
 		{
-			if(a instanceof Error)
+			return
+		}
+
+		var plain = ''
+		var params = null
+		var args = []
+		var prefix, prefixStyles;
+
+		if(prettyLogs)
+		{
+			prefix = '%c' + conf.label.toUpperCase() + '%c '
+			prefixStyles = [ 'background: ' + conf.labelColor + '; color: #fff; font-weight: bold; font-size: 0.9em; padding: 1px 10px', 'background: transparent' ]
+		}
+
+		if(DEV && self && self.constructor)
+		{
+			plain += self.constructor.name+' '
+
+			if(prettyLogs)
 			{
-				errors.push(a);
-				return a.message;
+				prefix += (('%c' + self.constructor.name + ' ').padEnd(ID_PADDING, " "))
+				prefixStyles.push('color: #000')
 			}
-			else if(isObject(a))
-			{
-				try
-				{
-					return JSON.stringify(a);
-				}
-				catch(e)
-				{
-					return JSON.stringify(a, getCircularReplacer());
-				}
-			}
-
-			return ""+a;
-		}).join(" ");
-
-		if(errors.length >= 1)
-		{
-			Sentry.withScope(scope =>
-			{
-				scope.setExtra('level', level == "error" ? "error" : "warning");
-				scope.setExtra('message', msg);
-				scope.setExtra('location', params[0]);
-				scope.setExtra('errors', errors);
-
-				// show message in Sentry
-				var err = new Error(msg);
-				err.name = errors[0].name;
-				err.stack = errors[0].stack;
-
-				Sentry.captureException(err);
-			});
 		}
 		else
 		{
-			Sentry.withScope(scope =>
+			plain += file+' '
+
+			if(prettyLogs)
 			{
-				scope.setExtra('level', level == "error" ? "error" : "warning");
-				scope.setExtra('message', msg);
-				scope.setExtra('location', params[0]);
-				scope.setExtra('errors', errors);
-
-				Sentry.captureMessage(msg);
-			});
-		}
-	}
-
-	params.unshift('['+level.toUpperCase()+']');
-
-	fn.apply(console, params);
-}
-
-function logger()
-{
-	this.delegate = global.loggerDelegate || consoleDelegate;
-
-	this.logTransformed = function(level, self, context)
-	{
-		var args = [];
-
-		if(self && self.constructor)
-		{
-			var n = self.constructor.name;
-
-			if(!context)
-			{
-				context = n;
-			}
-			else if(!context.startsWith(n))
-			{
-				context = n + "/" + context;
-			}
-
-			if(global.utils && utils.uniqueIdEnabled)
-			{
-				context += "[" + self.__id + "]";
+				prefix += (('%c' + file + ' ').padEnd(ID_PADDING, " "))
+				prefixStyles.push('color: #000')
 			}
 		}
 
 		if(context)
 		{
-			args.push(context);
+			plain += context
+
+			if(prettyLogs)
+			{
+				prefix += (('%c' + context).padEnd(CTX_PADDING, " "))
+				prefixStyles.push('color: #777')
+			}
 		}
 
-		if(arguments.length > 3)
+		if(arguments.length > 4)
 		{
-			args = args.concat(Array.prototype.slice.call(arguments, 3));
+			params = Array.prototype.slice.call(arguments, 4)
+			args = args.concat(params)
 		}
 
-		this.delegate(level, args);
-	};
-};
+		if(conf.report)
+		{
+			var isObject = function(obj)
+			{
+				return !!obj && obj instanceof Object && !Array.isArray(obj)
+			}
 
-export default new logger();
+			var errors = []
+			var msg = args.map(a =>
+			{
+				if(a instanceof Error)
+				{
+					errors.push(a)
+					return a.message
+				}
+				else if(isObject(a))
+				{
+					return JSON.stringify(a, getCircularReplacer())
+				}
 
-export { logger, consoleDelegate };
+				try
+				{
+					return String(a)
+				}
+				catch(e)
+				{
+					return "[error]"
+				}
+			}).join(" ")
+
+			Sentry.withScope(scope =>
+			{
+				scope.setExtra('level', level === "error" ? "error" : "warning")
+				scope.setExtra('message', msg)
+				scope.setExtra('location', file)
+				scope.setExtra('errors', errors)
+
+				if(errors.length >= 1)
+				{
+					// show message in Sentry
+					var err = new Error(msg)
+					err.name = errors[0].name
+					err.stack = errors[0].stack
+
+					Sentry.captureException(err)
+				}
+				else
+				{
+					Sentry.captureMessage(msg)
+				}
+			})
+		}
+
+		if(conf.breadCrumb)
+		{
+			Sentry.addBreadcrumb(
+			{
+				message: plain + (params ? ": "+params.map(a =>
+				{
+					try
+					{
+						return String(a)
+					}
+					catch(e)
+					{
+						return "[error]"
+					}
+				}).join(" ") : ""),
+				level: conf.breadCrumb,
+				category: 'console',
+ 			})
+		}
+
+		if(prettyLogs)
+		{
+			return [ prefix ].concat(prefixStyles).concat(args)
+		}
+
+		return [ "["+conf.label.toUpperCase()+"] "+plain ].concat(args)
+	}
+}
+
+export default new logger()
+export { logger }

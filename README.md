@@ -9,7 +9,7 @@ This is a plugin for JavaScript development using Gradle as the build tool based
   * PostCSS (8+)
   * Babel
 
-It also supports continuous building, splitting vendor and application code, Sentry, runtime presets, packaging and downloading required external software (node, pnpm).
+It also supports continuous building, fast refresh, splitting vendor and application code, Sentry, runtime presets, packaging and downloading required external software (node, pnpm).
 
 There are three plugins:
 
@@ -25,7 +25,7 @@ Usage in `build.gradle`:
 
 ```
 plugins {
-	id "ee.keel.gradle.JsToolkitPlugin" version "1.1"
+	id "ee.keel.gradle.JsToolkitPlugin" version "1.8"
 }
 
 jsToolkit {
@@ -44,7 +44,7 @@ jsToolkit {
 Default configuration files for JavaScript tools:
 
   * Babel: [`resources/babel/config.js`](resources/babel/config.js)
-  * PostCSS: [`resources/postcss/config.js`](resources/postcss/config.js)
+  * PostCSS: [`resources/postcss/base.js`](resources/postcss/base.js), [`resources/postcss/config.js`](resources/postcss/config.js)
   * WebPack: [`resources/webpack/base.js`](resources/webpack/base.js) (general), [`resources/webpack/base.config.js`](resources/webpack/base.config.js) (app), [`resources/webpack/base.config.libs.js`](resources/webpack/base.config.libs.js) (libraries)
 
 You are free to extend or override those, but the configuration needs to be compatible with the plugin.
@@ -80,6 +80,8 @@ It is also possible to define the location of the configuration files in the plu
   * `tools/node_modules`
 
 The environment-dependent variants are mainly to ease working with git submodules: you can add the submodule to e.g. `libs`, but locally create a symlinked version in `libs-development`.
+
+A webpack configuration with only static resolver settings is written to `build/webpack.{module}.js` for use with external tools (IDEs, Madge, etc).
 
 # DSL
 
@@ -285,16 +287,12 @@ warn: 'User', id, 'not found';
 which would get transformed into
 
 ```
-logger.logTransformed(level, self, context, ...args)
+logger.warn.apply(logger.warn, logger.params(level, self, file, context, ...args))
 ```
 
-which by default would log all available context information along with the message:
+which by default would log all available context information (runtime class, file, defined class, method, line number for anonymous methods) along with the arguments passed.
 
-```
-[WARN] RuntimeClassName/FileName:ClassName:MethodName[anonymous@18] User 5 not found
-```
-
-and additionally send it to Sentry for the "warn" and "error" levels. Any error objects supplied as arguments are included for stack trace.
+Additionally data is sent to Sentry for the "warn" and "error" levels. Any error objects supplied as arguments are included for stack trace.
 
 Available labels are:
 
@@ -346,3 +344,11 @@ Library versions are automatically tracked, they change when the library gets re
 The plugin supports running all Node tasks continuously. By default only module tasks are run continuously, any modifications that would cause libraries to be rebuilt or other major changes require restarting the build.
 
 Gradle waits for the relevant build to finish before continuing with other tasks, so the task outputs can be used as inputs for other tasks.
+
+Fast refresh is also supported, but requires trusting the SSL certificate (CN=127.0.0.1) at [`resources/certs/cert.crt`](resources/certs/cert.crt) in your browser first. To enable fast refresh use the `-Phmr` flag.
+
+## Dependency analysis
+
+  * `webpack-visualizer-plugin` output is stored under the relevant library or module directories
+  * using `madge`: `tools/node_modules/.bin/madge --webpack-config=build/webpack.{module}.js --extensions=js,jsx --image=build/{module}.svg js/{module}/index.js`
+  * a text-based dependency tree is output in non-continuous development mode to `build/{module}.deps` (relative dependencies are output only for the first occurrence)

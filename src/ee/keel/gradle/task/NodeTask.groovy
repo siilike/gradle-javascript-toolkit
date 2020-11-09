@@ -22,7 +22,12 @@ class NodeTask extends ContinuousExecTask implements WithEnvironmentProperties
 			def n = jstk.node.get()
 
 			setExecutable(n.path.get())
-			setArgs((List<String>) n.args.get())
+
+			if(project.hasProperty("debugNode")) {
+				args "--inspect"
+			}
+
+			args((List<String>) n.args.get())
 
 			environmentProperty "NODE_ENV", jstk.environment
 

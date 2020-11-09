@@ -405,7 +405,11 @@ abstract class JavascriptPlugin implements Plugin<Project>
 
 							if(b.containsKey("dependencies"))
 							{
-								return ((Map) b.dependencies).keySet() as List
+								def deps = ((Map) b.dependencies).keySet() as List
+
+								deps.remove("@babel/runtime")
+
+								return deps
 							}
 
 							return []

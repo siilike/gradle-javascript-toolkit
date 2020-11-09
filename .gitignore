@@ -4,4 +4,6 @@ build
 .settings
 .project
 .classpath
+.idea
+TODO
 
