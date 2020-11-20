@@ -159,7 +159,18 @@ module.exports = (ctx, userConf = {}) =>
 		ret.config.plugins.push(
 		[
 			'cssnano',
-			{},
+			{
+				preset:
+				[
+					'default',
+					{
+						discardComments:
+						{
+							removeAll: true,
+						},
+					},
+				],
+			},
 		])
 	}
 

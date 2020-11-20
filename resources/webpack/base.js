@@ -5,6 +5,7 @@ const fs = require('fs')
 
 const Visualizer = require('webpack-visualizer-plugin')
 const TerserJsPlugin = require('terser-webpack-plugin')
+const WebpackNotifierPlugin = require('webpack-notifier');
 
 const FULLY_SPECIFIED = false
 
@@ -128,7 +129,7 @@ module.exports = userConf =>
 	{
 		mode: v.NODE_ENV,
 		name: v.MODULE,
-		devtool: v.SOURCE_MAP || false,
+		devtool: v.HMR ? false : (v.SOURCE_MAP || false),
 		optimization:
 		{
 			minimize: false,
@@ -211,11 +212,8 @@ module.exports = userConf =>
 
 				'MODULE': JSON.stringify(v.MODULE),
 				'ENV': JSON.stringify(v.ENV),
-			}),
 
-			new Visualizer(
-			{
-				filename: "../webpack-"+v.MODULE+'-'+v.ENV+'-'+v.BROWSERSLIST_ENV+".html",
+				'CONTINUOUS': JSON.stringify(v.CONTINUOUS),
 			}),
 		],
 		output:
@@ -225,6 +223,34 @@ module.exports = userConf =>
 			hotUpdateChunkFilename: v.MODULE+'.hmr-[id]-[hash].js',
 		}
 	})
+
+	if(v.CONTINUOUS !== "true")
+	{
+		ret.config.plugins.push(new Visualizer(
+		{
+			filename: "../webpack-" + v.MODULE + '-' + v.ENV + '-' + v.BROWSERSLIST_ENV + ".html",
+		}))
+	}
+	else
+	{
+		ret.config.optimization.removeAvailableModules = false
+		ret.config.optimization.removeEmptyChunks = false
+		ret.config.output.pathinfo = false
+
+		ret.config.watchOptions =
+		{
+			ignored: [ 'node_modules/**' ]
+		}
+
+		ret.config.plugins.push(
+			new WebpackNotifierPlugin(
+			{
+				title: v.MODULE,
+				excludeWarnings: true,
+				onlyOnError: true,
+			})
+		)
+	}
 
 	if(v.MINIFY === 'true' && v.NODE_ENV !== 'development')
 	{

@@ -220,6 +220,7 @@ abstract class JsToolkitExtension extends JsToolkitModel
 			version "react-refresh", "latest"
 			version "@pmmmwh/react-refresh-webpack-plugin", "latest"
 			version "webpack-plugin-serve", "siilike/webpack-plugin-serve"
+			version "webpack-notifier", "latest"
 
 			version "hjson", "latest"
 

@@ -22,15 +22,16 @@ Object.assign(ret.config,
 	entry:
 	{
 		main: [ 'index' ],
-	},
-	output:
-	{
-		publicPath: '/',
-		path: v.OUTPUT_DIR,
-		filename: v.MODULE+'-[name]-'+v.ENV+'-'+v.BROWSERSLIST_ENV+'.js',
-		sourceMapFilename: v.MODULE+'-[name]-'+v.ENV+'-'+v.BROWSERSLIST_ENV+'.map',
-		chunkFilename: v.MODULE+'-[name]-'+v.ENV+'-'+v.BROWSERSLIST_ENV+'.js',
-	},
+	}
+})
+
+Object.assign(ret.config.output,
+{
+	publicPath: '/',
+	path: v.OUTPUT_DIR,
+	filename: v.MODULE+'-[name]-'+v.ENV+'-'+v.BROWSERSLIST_ENV+'.js',
+	sourceMapFilename: v.MODULE+'-[name]-'+v.ENV+'-'+v.BROWSERSLIST_ENV+'.map',
+	chunkFilename: v.MODULE+'-[name]-'+v.ENV+'-'+v.BROWSERSLIST_ENV+'.js',
 })
 
 ret.config.resolve.modules.splice(1, 0, path.join(v.PROJECT_DIR, 'js/' + v.MODULE))
@@ -87,20 +88,23 @@ ret.config.optimization.splitChunks =
 
 if(v.NODE_ENV === 'development' && v.HMR === 'true')
 {
+	ret.config.optimization.splitChunks = false
+
 	ret.config.entry.main.unshift('webpack-plugin-serve/client');
 
 	ret.config.plugins.push(new ReactRefreshPlugin(
 	{
 		forceEnable: true,
 		exclude: nodeModulesRegex,
+		overlay: false,
 	}));
 
 	ret.config.plugins.push(new WebpackPluginServe(
 	{
-		progress: true,
-		status: true,
+		progress: 'minimal',
+		status: false,
 		host: '127.0.0.1',
-		port: 0,
+		port: process.env.HMR_PORT ? parseInt(process.env.HMR_PORT) : 0,
 		https:
 		{
 			key: fs.readFileSync(TOOLS_DIR + '/certs/cert.key'),
