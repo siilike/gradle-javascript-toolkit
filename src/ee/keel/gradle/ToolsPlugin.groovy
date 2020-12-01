@@ -214,7 +214,7 @@ abstract class ToolsPlugin implements Plugin<Project>
 			it.setWorkingDir(getExt().toolsDirectory)
 		})
 
-		def saveBuildToolsLocks = project.tasks.register("saveBuildToolsLocks", PnpmInstallTask, { PnpmInstallTask it ->
+		def saveBuildToolsLocks = project.tasks.register("saveBuildToolsLocks", { Task it ->
 			it.dependsOn installBuildToolsPnpm
 
 			it.inputs.files getExt().toolsDirectory.file("pnpm-lock.yaml")

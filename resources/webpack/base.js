@@ -60,6 +60,17 @@ module.exports = userConf =>
 		preferModules: v.PREFER_MODULES === 'true'
 	}, userConf)
 
+	if(v.JSTK_DEBUG === 'true')
+	{
+		console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> WEBPACK VARS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+		console.log(JSON.stringify(v, null, 2))
+		console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< WEBPACK VARS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
+		console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> WEBPACK CONFIGURATION >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+		console.log(JSON.stringify(config, null, 2))
+		console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< WEBPACK CONFIGURATION <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+	}
+
 	const libraries = process.env.LIBRARIES ? process.env.LIBRARIES.split(",") : [];
 
 	var ret =
@@ -129,7 +140,7 @@ module.exports = userConf =>
 	{
 		mode: v.NODE_ENV,
 		name: v.MODULE,
-		devtool: v.HMR ? false : (v.SOURCE_MAP || false),
+		devtool: v.HMR === 'true' ? false : (v.SOURCE_MAP || false),
 		optimization:
 		{
 			minimize: false,

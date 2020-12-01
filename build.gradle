@@ -27,7 +27,7 @@ if(project.hasProperty("local"))
 }
 else
 {
-	version = '1.9'
+	version = '1.11'
 }
 
 sourceCompatibility = 1.8

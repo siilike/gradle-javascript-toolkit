@@ -1,5 +1,7 @@
 package ee.keel.gradle
 
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.util.regex.Pattern
 
 import org.gradle.api.Plugin
@@ -304,6 +306,18 @@ abstract class JavascriptPlugin implements Plugin<Project>
 			t.dependsOn ToolsPlugin.ENSURE_BUILD_TOOLS_TASK
 
 			t.setWorkingDir(project.buildDir)
+		})
+
+		def saveLocks = project.tasks.register("saveLocks", Task, { Task it ->
+			it.dependsOn installDependencies
+
+			it.inputs.files project.layout.buildDirectory.file("pnpm-lock.yaml")
+
+			it.outputs.files project.layout.projectDirectory.file("pnpm-lock.yaml")
+
+			it.doLast {
+				Files.copy(project.layout.buildDirectory.file("pnpm-lock.yaml").get().asFile.toPath(), project.layout.projectDirectory.file("pnpm-lock.yaml").asFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+			}
 		})
 
 		// FIXME gradle bug
