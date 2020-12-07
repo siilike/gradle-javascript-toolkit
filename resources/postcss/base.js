@@ -125,12 +125,20 @@ module.exports = (ctx, userConf = {}) =>
 			'postcss-nested',
 			{},
 		],
+	])
+
+	if(v.BROWSERSLIST.indexOf('ie 11') !== -1)
+	{
+		ret.config.plugins.push(
 		[
 			'postcss-css-variables',
 			{
 				preserveAtRulesOrder: true,
 			},
-		],
+		])
+	}
+
+	ret.config.plugins.push(...[
 		[
 			'postcss-preset-env',
 			{
