@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.locks.AbstractQueuedSynchronizer
 
+import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.zeromq.SocketType
@@ -19,8 +20,7 @@ public class ZMQHandler
 {
 	private final static Logger logger = Logging.getLogger(ZMQHandler)
 
-	private static ZMQHandler instance;
-
+	protected Project project
 	protected ZContext context
 	protected ZMQ.Socket socket
 	protected int port
@@ -28,20 +28,9 @@ public class ZMQHandler
 	protected Map<String, String> status = new HashMap<>()
 	protected Map<String, Sync> statusSync = new ConcurrentHashMap<>()
 
-	public ZMQHandler()
+	public ZMQHandler(Project project)
 	{
-		//
-	}
-
-	public static synchronized ZMQHandler instance()
-	{
-		if(!instance)
-		{
-			instance = new ZMQHandler()
-			instance.init()
-		}
-
-		return instance
+		this.project = project
 	}
 
 	public void init()
@@ -50,6 +39,17 @@ public class ZMQHandler
 		{
 			logger.debug("Already initialized")
 			return;
+		}
+
+		JavascriptPlugin plugin = null
+
+		try
+		{
+			plugin = (JavascriptPlugin) Utils.getPlugin(project, JavascriptPlugin.PLUGIN_PROPERTY_NAME)
+		}
+		catch(Exception e)
+		{
+			logger.debug("Unable to get JavascriptPlugin", e)
 		}
 
 		context = new ZContext()
@@ -78,21 +78,29 @@ public class ZMQHandler
 					{
 						logger.debug("Marking {} as done", k)
 
+						plugin?.broadcast("done", [ "id": k ])
+
 						l.done()
 					}
 					else if(v.event.equals("watchRun"))
 					{
 						logger.debug("Marking {} as running", k)
 
+						plugin?.broadcast("build", [ "id": k ])
+
 						l.running()
 					}
 					else if(v.event.equals("error"))
 					{
 						logger.error("An error ocurred when running {}", k)
+
+						plugin?.broadcast("error", [ "id": k ])
 					}
 					else if(v.event.equals("init"))
 					{
 						logger.debug("{} initialized", k)
+
+						plugin?.broadcast("init", [ "id": k ])
 					}
 					else
 					{

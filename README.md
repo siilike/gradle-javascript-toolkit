@@ -9,7 +9,7 @@ This is a plugin for JavaScript development using Gradle as the build tool based
   * PostCSS (8+)
   * Babel
 
-It also supports continuous building, fast refresh, splitting vendor and application code, Sentry, runtime presets, packaging and downloading required external software (node, pnpm).
+It also supports continuous building, fast refresh, automatic CSS reloading, splitting vendor and application code, Sentry, runtime presets, packaging and downloading required external software (node, pnpm).
 
 There are three plugins:
 
@@ -351,4 +351,4 @@ Fast refresh is also supported, but requires trusting the SSL certificate (CN=12
 
   * `webpack-visualizer-plugin` output is stored under the relevant library or module directories
   * using `madge`: `tools/node_modules/.bin/madge --webpack-config=build/webpack.{module}.js --extensions=js,jsx --image=build/{module}.svg js/{module}/index.js`
-  * a text-based dependency tree is output in non-continuous development mode to `build/{module}.deps` (relative dependencies are output only for the first occurrence)
+  * a text-based dependency tree is output in non-continuous development mode to `build/{module}.deps.gz` (relative dependencies are output only for the first occurrence)

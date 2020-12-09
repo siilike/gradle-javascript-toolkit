@@ -19,7 +19,9 @@ import org.gradle.process.internal.DefaultExecSpec
 import org.gradle.process.internal.ExecAction
 import org.gradle.process.internal.ExecException
 
+import ee.keel.gradle.JavascriptPlugin
 import ee.keel.gradle.StreamLogger
+import ee.keel.gradle.Utils
 import ee.keel.gradle.ZMQHandler
 import groovy.transform.CompileStatic;
 
@@ -35,6 +37,10 @@ public class ContinuousExecTask extends Exec
 	{
 		logging.captureStandardOutput(getStdoutLogLevel())
 		logging.captureStandardError(getStdErrLogLevel())
+
+		configure {
+			outputs.upToDateWhen { !continuous.get() }
+		}
 	}
 
 	@Internal
@@ -74,13 +80,24 @@ public class ContinuousExecTask extends Exec
 				def action = execActionFactory.newExecAction()
 				taskExecSpec.copyTo(action)
 
-				zmq = new ZMQHandler()
+				zmq = new ZMQHandler(project)
 				zmq.init()
 
 				l = zmq.getStatusSync(getPath())
 
 				action.environment "ZMQ_ADDR", "tcp://127.0.0.1:"+zmq.port
 				action.environment "ZMQ_ID", getPath()
+
+				try
+				{
+					def plugin = (JavascriptPlugin) Utils.getPlugin(project, JavascriptPlugin.PLUGIN_PROPERTY_NAME)
+
+					action.environment "ZMQ_BROADCAST", "tcp://127.0.0.1:"+plugin.getBroadcastPort()
+				}
+				catch(Exception e)
+				{
+					logger.debug("Unable to set ZMQ broadcast info", e)
+				}
 
 				if(continuousRunning() && !l.isRunning())
 				{

@@ -144,6 +144,7 @@ abstract class ToolsPlugin implements Plugin<Project>
 				"webpack/base.config.libs.js",
 				"webpack/config.js",
 				"webpack/config.libs.js",
+				"webpack/dependencies.js",
 				"webpack/plugin.js",
 				"postcss/base.js",
 				"postcss/base.config.js",

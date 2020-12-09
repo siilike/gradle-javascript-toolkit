@@ -23,6 +23,9 @@ import org.gradle.api.tasks.bundling.Compression
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
 import org.redline_rpm.header.Os
+import org.zeromq.SocketType
+import org.zeromq.ZContext
+import org.zeromq.ZMQ
 
 import com.netflix.gradle.plugins.packaging.SystemPackagingBasePlugin
 import com.netflix.gradle.plugins.packaging.SystemPackagingTask
@@ -45,6 +48,7 @@ import ee.keel.gradle.task.Rpm
 import ee.keel.gradle.task.SentryTask
 import ee.keel.gradle.task.SentryUploadTask
 import ee.keel.gradle.task.WebpackTask
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 
@@ -61,6 +65,10 @@ abstract class JavascriptPlugin implements Plugin<Project>
 	protected Project project
 	protected JsToolkitExtension ext
 	protected EnvironmentsExtension envExt
+
+	protected ZContext context
+	protected ZMQ.Socket pubSocket
+	protected int pubPort
 
 	public JavascriptPlugin()
 	{
@@ -82,6 +90,29 @@ abstract class JavascriptPlugin implements Plugin<Project>
 		project.extensions.extraProperties.set(PLUGIN_PROPERTY_NAME, this)
 
 		createTasks(project)
+
+		initZmq()
+	}
+
+	public int getBroadcastPort()
+	{
+		return pubPort
+	}
+
+	public void broadcast(String type, Object content)
+	{
+		pubSocket.send(JsonOutput.toJson(
+		[
+			type: type,
+			content: content,
+		]))
+	}
+
+	protected void initZmq()
+	{
+		context = new ZContext()
+		pubSocket = context.createSocket(SocketType.PUB)
+		pubPort = pubSocket.bindToRandomPort("tcp://127.0.0.1", 20000, 30000)
 	}
 
 	protected void createTasks(Project project)
@@ -536,9 +567,13 @@ abstract class JavascriptPlugin implements Plugin<Project>
 				t.doFirst {
 					moduleDir.get().asFile.mkdirs()
 
+					def file = cssTmpFile.get().asFile
 					def imports = inputFiles.collect { "@import \"${it.absolutePath}\";" }.join("\n")
 
-					cssTmpFile.get().asFile.text = imports
+					if(!file.exists() || file.text != imports)
+					{
+						file.text = imports
+					}
 				}
 			})
 
