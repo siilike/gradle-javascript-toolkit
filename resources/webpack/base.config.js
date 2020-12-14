@@ -114,7 +114,7 @@ if(v.NODE_ENV === 'development' && v.HMR === 'true')
 	}));
 }
 
-if(v.NODE_ENV === 'development' && v.CONTINUOUS !== "true")
+if(v.JSTK_DEBUG === "true" && v.CONTINUOUS !== "true")
 {
 	ret.config.plugins.push(new DependencyTreePlugin(v.MODULE, v.BUILD_DIR))
 }

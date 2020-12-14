@@ -349,6 +349,7 @@ Fast refresh is also supported, but requires trusting the SSL certificate (CN=12
 
 ## Dependency analysis
 
-  * `webpack-visualizer-plugin` output is stored under the relevant library or module directories
+  * `webpack-visualizer-plugin` output is stored under the relevant library or module directories in non-continuous mode
   * using `madge`: `tools/node_modules/.bin/madge --webpack-config=build/webpack.{module}.js --extensions=js,jsx --image=build/{module}.svg js/{module}/index.js`
-  * a text-based dependency tree is output in non-continuous development mode to `build/{module}.deps.gz` (relative dependencies are output only for the first occurrence)
+  * a text-based dependency tree is output in non-continuous `--debug` mode to `build/{module}.deps.gz` (relative dependencies are output only for the first occurrence)
+  * in non-continuous `--debug` mode profiling information is output to `build/{module}.profile.json`

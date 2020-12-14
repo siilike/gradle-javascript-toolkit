@@ -195,7 +195,7 @@ abstract class JsToolkitExtension extends JsToolkitModel
 			version "postcss-atroot", "latest"
 			version "postcss-extend-rule", "latest"
 			version "postcss-import", "latest"
-			version "postcss-nested", "latest"
+			version "postcss-nested", "5.0.1"
 			version "postcss-nested-props", "latest"
 			version "postcss-preset-env", "latest"
 			version "postcss-property-lookup", "latest"

@@ -14,6 +14,9 @@ public class WebpackTask extends AbstractWebpackTask
 		}
 
 		configure {
+// 			args '--inspect-brk'
+// 			args '--inspect'
+
 			args jstk.toolsDirectory.get().file("node_modules/webpack/bin/webpack.js").asFile.absolutePath
 
 			if(project.logger.debugEnabled)

@@ -235,6 +235,17 @@ module.exports = userConf =>
 		}
 	})
 
+	if(v.JSTK_DEBUG === "true" && v.CONTINUOUS !== "true")
+	{
+		// doesn't work with hmr or continuous mode
+		ret.config.plugins.push(
+			new webpack.debug.ProfilingPlugin(
+			{
+				outputPath: v.BUILD_DIR + '/' + v.MODULE + '.profile.json',
+			})
+		)
+	}
+
 	if(v.CONTINUOUS !== "true")
 	{
 		ret.config.plugins.push(new Visualizer(
@@ -250,7 +261,10 @@ module.exports = userConf =>
 
 		ret.config.watchOptions =
 		{
-			ignored: [ 'node_modules/**' ]
+			ignored:
+			[
+				'node_modules/**',
+			],
 		}
 
 		ret.config.plugins.push(
